@@ -1,4 +1,4 @@
-# Helix Markdown to Word
+# Helix Markdown to JCR
 
 > A library that converts markdown to Word documents.
 

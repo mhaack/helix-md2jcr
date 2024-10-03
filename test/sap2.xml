@@ -1,23 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-    xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
-    jcr:primaryType="cq:Page">
-    <jcr:content cq:template="/libs/core/franklin/templates/page" jcr:primaryType="cq:PageContent"
-        sling:resourceType="core/franklin/components/page/v1/page"
-        jcr:title="Sustainability | Sustainable Business Topics &amp; Trends | SAP"
-        jcr:description="Learn how sustainability initiatives bring value across your business."
-        image="/content/dam/sap/topics/media_12fad65cf53b722af46da922c38101b763d1113eb.png">
-        <root jcr:primaryType="nt:unstructured"
-            sling:resourceType="core/franklin/components/root/v1/root">
-            <title sling:resourceType="core/franklin/components/title/v1/title"
-                jcr:primaryType="nt:unstructured" jcr:title="What is a Regenerative Business?"
-                type="h2" />
-            <text sling:resourceType="core/franklin/components/text/v1/text"
-                jcr:primaryType="nt:unstructured"
-                text="Every company and every person has an influence on the environment—and every organization and business leader plays a role in creating systems and processes to reduce the damage. But some businesses are going a step further—inventing ways to replenish finite resources and restore the ecosystems that support life, including ours. In other words, beyond doing no harm, they’re working to improve the planet. This is called regeneration." />
-            <text sling:resourceType="core/franklin/components/text/v1/text"
-                jcr:primaryType="nt:unstructured"
-                text="To understand the kind of effort this work requires, let’s look at a major player in the mining industry, for few industries affect the natural world more. For thousands of years, people have taken valuable materials from the earth, leaving &lt;a href&#x3D;&quot;https://www.sciencedirect.com/science/article/pii/S266675922200021X#:~:text&amp;#x3D;Contaminants%20in%20these%20areas%20are,arsenic%2C%20lead%2C%20and%20mercury.&quot;&gt;&lt;/a&gt; in their wake once a site is plundered. Now the world’s largest mining companies are increasingly recognizing the need to do more than pursue sustainable practices and clean up retired mines. They’re partnering with affected communities to restore closed mine sites, allowing them to heal and rejuvenate." />
+<?xml version="1.0" encoding="UTF-8"?><jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
+    <jcr:content cq:template="/libs/core/franklin/templates/page" jcr:primaryType="cq:PageContent" sling:resourceType="core/franklin/components/page/v1/page" jcr:title="Sustainability | Sustainable Business Topics &amp; Trends | SAP" jcr:description="Learn how sustainability initiatives bring value across your business." image="/content/dam/sap/topics/media_12fad65cf53b722af46da922c38101b763d1113eb.png">
+        <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
+    <section_0 sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="What is a Regenerative Business?" type="h2"/>        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="Every company and every person has an influence on the environment—and every organization and business leader plays a role in creating systems and processes to reduce the damage. But some businesses are going a step further—inventing ways to replenish finite resources and restore the ecosystems that support life, including ours. In other words, beyond doing no harm, they’re working to improve the planet. This is called regeneration."/>        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="To understand the kind of effort this work requires, let’s look at a major player in the mining industry, for few industries affect the natural world more. For thousands of years, people have taken valuable materials from the earth, leaving &lt;a href&#x3D;&quot;https://www.sciencedirect.com/science/article/pii/S266675922200021X#:~:text&amp;#x3D;Contaminants%20in%20these%20areas%20are,arsenic%2C%20lead%2C%20and%20mercury.&quot;&gt;&lt;/a&gt; in their wake once a site is plundered. Now the world’s largest mining companies are increasingly recognizing the need to do more than pursue sustainable practices and clean up retired mines. They’re partnering with affected communities to restore closed mine sites, allowing them to heal and rejuvenate."/>    </section_0>
+    <section_1 sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="Second heading" type="h2"/>        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="Every company and every person has an influence on the environment—and every organization and business leader plays a role in creating systems and processes to reduce the damage. But some businesses are going a step further—inventing ways to replenish finite resources and restore the ecosystems that support life, including ours. In other words, beyond doing no harm, they’re working to improve the planet. This is called regeneration."/>    </section_0>
+    
         </root>
     </jcr:content>
 </jcr:root>

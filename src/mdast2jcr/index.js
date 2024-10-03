@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-
+import path from 'path';
 import sanitizeHtml from './mdast-sanitize-html.js';
 import downloadImages from './mdast-download-images.js';
 import { buildAnchors } from './mdast-docx-anchors.js';
 import { inspect } from 'util';
 import Handlebars from 'handlebars';
+import { readFile } from 'fs/promises';
+import { splitSection } from './utils.js';
 
 
 export default async function mdast2jcr(mdast, opts = {}) {
@@ -38,6 +40,8 @@ export default async function mdast2jcr(mdast, opts = {}) {
 
   // eslint-disable-next-line no-param-reassign
   mdast = sanitizeHtml(mdast);
+  // eslint-disable-next-line no-param-reassign
+  mdast = splitSection(mdast);
 
   process.stdout.write('==================================================\n');
   process.stdout.write(inspect(mdast));
@@ -57,20 +61,13 @@ export default async function mdast2jcr(mdast, opts = {}) {
   Handlebars.registerPartial('text', '{{value}}');
   Handlebars.registerPartial('link', '<a href="{{url}}">{{children.0.text}}</a>');
   Handlebars.registerHelper('whichPartial', (context) => context);
-  //Handlebars.registerHelper('encode', (options) => Handlebars.Utils.escapeExpression(options.fn(this)));
-  Handlebars.registerHelper("encode", function(options) {
+  Handlebars.registerHelper('encode', function(options) {
     return Handlebars.Utils.escapeExpression(options.fn(this));
   });
+  // register page template
+  const pageTemplateXML = await readFile(path.resolve('./src/mdast2jcr', 'templates', 'page.xml'), 'utf-8');
+  const template = Handlebars.compile(pageTemplateXML);
 
-  const template = Handlebars.compile(`<?xml version="1.0" encoding="UTF-8"?><jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
-    <jcr:content cq:template="/libs/core/franklin/templates/page" jcr:primaryType="cq:PageContent" sling:resourceType="core/franklin/components/page/v1/page" jcr:title="Sustainability | Sustainable Business Topics &amp; Trends | SAP" jcr:description="Learn how sustainability initiatives bring value across your business." image="/content/dam/sap/topics/media_12fad65cf53b722af46da922c38101b763d1113eb.png">
-        <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
-    {{#each children}}
-    {{> (whichPartial this.type) }}
-    {{/each}}
-     </root>
-    </jcr:content>
-</jcr:root>`);
   const xml = template(mdast);
 
   process.stdout.write(xml);

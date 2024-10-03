@@ -10,35 +10,44 @@
  * governing permissions and limitations under the License.
  */
 
-/**
- * @typedef {import('docx').XmlComponent} XmlComponent
- *
- * @param {XmlComponent} root
- * @param path
- * @returns {XmlComponent}
- */
-// eslint-disable-next-line import/prefer-default-export
-export function findXMLComponent(root, path) {
-  const segs = path.split('/');
-  let comp = root;
-  while (comp && segs.length) {
-    const key = segs.shift();
-    comp = comp.root.find((c) => c.rootKey === key);
-  }
-  return comp;
-}
+/* eslint-disable no-param-reassign */
 
 /**
- * removes undefined and null properties from the given object.
- * @param {object} obj
- * @returns {object}
+ * Splits the sections in the mdast tree
+ * @type PipelineStep
+ * @param {PipelineState} state
  */
-export function removeUndefined(obj) {
-  for (const key of Object.keys(obj)) {
-    if (obj[key] === undefined || obj[key] === null) {
-      // eslint-disable-next-line no-param-reassign
-      delete obj[key];
-    }
-  }
-  return obj;
+export function splitSection(mdast) {
+  // filter all children that are break blocks
+  const dividers = mdast.children
+    .filter((node) => node.type === 'thematicBreak')
+    // then get their index in the list of children
+    .map((node) => mdast.children.indexOf(node));
+
+  // find pairwise permutations of spaces between blocks
+  // include the very start and end of the document
+  const starts = [0, ...dividers];
+  const ends = [...dividers, mdast.children.length];
+
+  // content.mdast.children = _.zip(starts, ends)
+  mdast.children = starts
+    .map((k, i) => [k, ends[i]])
+    // but filter out empty section
+    .filter(([start, end]) => start !== end)
+    // then return all nodes that are in between
+    .map(([start, end]) => {
+      // skip 'thematicBreak' nodes
+      const index = mdast.children[start].type === 'thematicBreak' ? start + 1 : start;
+      return {
+        type: 'section',
+        children: mdast.children.slice(index, end),
+      };
+    });
+
+  // unwrap sole section directly on the root
+  // if (mdast.children.length === 1 && mdast.children[0].type === 'section') {
+  //   mdast.children = mdast.children[0].children;
+  // }
+
+  return mdast;
 }

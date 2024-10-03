@@ -1,6 +1,6 @@
 # Helix Markdown to JCR
 
-> A library that converts markdown to Word documents.
+> A library that converts markdown to JCR.
 
 ## Status
 [![codecov](https://img.shields.io/codecov/c/github/adobe/helix-md2docx.svg)](https://codecov.io/gh/adobe/helix-md2docx)
@@ -15,7 +15,7 @@
 ## Usage
 
 ```bash
-npm install @adobe/helix-md2docx
+npm install @adobe/helix-md2jcr
 ```
 
 ## Converting Markdown to Docx
@@ -23,7 +23,7 @@ npm install @adobe/helix-md2docx
 just run:
 
 ```
-node ./src/cli/convert2docx.js <file>
+node ./src/cli/convert2jcr.js <file>
 ```
 
 Where `file` can either be a single file or directory.

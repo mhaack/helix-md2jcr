@@ -17,7 +17,7 @@ import { buildAnchors } from './mdast-docx-anchors.js';
 import { inspect } from 'util';
 import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
-import { splitSection, unwrapImages, wrapParagraphs } from './utils.js';
+import { splitSection, unwrapImages as unwrapElements, wrapParagraphs } from './utils.js';
 import { select } from 'unist-util-select';
 import { toHast } from 'mdast-util-to-hast';
 import { toHtml } from 'hast-util-to-html';
@@ -41,7 +41,7 @@ export default async function mdast2jcr(mdast, opts = {}) {
   // eslint-disable-next-line no-param-reassign
   mdast = splitSection(mdast);
   // eslint-disable-next-line no-param-reassign
-  mdast = unwrapImages(mdast);
+  mdast = unwrapElements(mdast);
   // eslint-disable-next-line no-param-reassign
   mdast = wrapParagraphs(mdast);
 
@@ -50,47 +50,43 @@ export default async function mdast2jcr(mdast, opts = {}) {
   // process.stdout.write('\n');
   // process.stdout.write('==================================================\n');
 
-  // process.stdout.write(JSON.stringify(mdast, null, 2));
-  // process.stdout.write('\n');
-  // process.stdout.write('==================================================\n');
-
   // await downloadImages(ctx, mdast);
   await buildAnchors(mdast);
-  // const children = await all(ctx, mdast);
+
 
   Handlebars.registerPartial(
     'heading',
-    '<title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="{{children.0.value}}" type="h{{depth}}"/>',
+    '<title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="{{children.0.value}}" type="h{{depth}}"/>\n',
   );
   Handlebars.registerPartial(
     'image',
-    '<image sling:resourceType="core/franklin/components/image/v1/image" jcr:primaryType="nt:unstructured" fileReference="{{url}}" alt="{{alt}}"/>',
+    '<image sling:resourceType="core/franklin/components/image/v1/image" jcr:primaryType="nt:unstructured" fileReference="{{url}}" alt="{{alt}}"/>\n',
   );
 
   Handlebars.registerPartial(
     'link',
-    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{url}}" linkTitle="{{title}}" linkText="{{children.0.value}}" />',
+    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{url}}" linkTitle="{{title}}" linkText="{{children.0.value}}" />\n',
   );
 
   Handlebars.registerPartial(
     'strong',
-    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="primary" />',
+    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="primary" />\n',
   );
 
   Handlebars.registerPartial(
     'emphasis',
-    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="secondary" />',
+    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="secondary" />\n',
   );
 
   Handlebars.registerPartial('paragraphWrapper', (context) => {
     const hast = toHast(context);
     const html = toHtml(hast);
     return `<text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="${Handlebars.Utils.escapeExpression(
-      html
+      html,
     )}"/>\n`;
   });
 
-  Handlebars.registerPartial('gridTable', '<block></block>');
+  Handlebars.registerPartial('gridTable', '<block></block>\n'); // TODO
   Handlebars.registerHelper('whichPartial', (context) => context);
   Handlebars.registerHelper('encode', function (options) {
     return Handlebars.Utils.escapeExpression(options.fn(this));
@@ -106,7 +102,7 @@ export default async function mdast2jcr(mdast, opts = {}) {
   // register page template
   const pageTemplateXML = await readFile(
     path.resolve('./src/mdast2jcr', 'templates', 'page.xml'),
-    'utf-8'
+    'utf-8',
   );
   const template = Handlebars.compile(pageTemplateXML);
 

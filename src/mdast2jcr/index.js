@@ -17,15 +17,13 @@ import { buildAnchors } from './mdast-docx-anchors.js';
 import { inspect } from 'util';
 import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
-import { splitSection } from './utils.js';
-
+import { splitSection, unwrapImages, wrapParagraphs } from './utils.js';
+import { select } from 'unist-util-select';
+import { toHast } from 'mdast-util-to-hast';
+import { toHtml } from 'hast-util-to-html';
 
 export default async function mdast2jcr(mdast, opts = {}) {
-  const {
-    log = console,
-    resourceLoader,
-    image2png,
-  } = opts;
+  const { log = console, resourceLoader, image2png } = opts;
 
   // const ctx = {
   //   style: {},
@@ -42,30 +40,74 @@ export default async function mdast2jcr(mdast, opts = {}) {
   mdast = sanitizeHtml(mdast);
   // eslint-disable-next-line no-param-reassign
   mdast = splitSection(mdast);
+  // eslint-disable-next-line no-param-reassign
+  mdast = unwrapImages(mdast);
+  // eslint-disable-next-line no-param-reassign
+  mdast = wrapParagraphs(mdast);
 
-  process.stdout.write('==================================================\n');
-  process.stdout.write(inspect(mdast));
-  process.stdout.write('\n');
-  process.stdout.write('==================================================\n');
+  // process.stdout.write('==================================================\n');
+  // process.stdout.write(inspect(mdast));
+  // process.stdout.write('\n');
+  // process.stdout.write('==================================================\n');
 
-  process.stdout.write(JSON.stringify(mdast, null, 2));
-  process.stdout.write('\n');
-  process.stdout.write('==================================================\n');
+  // process.stdout.write(JSON.stringify(mdast, null, 2));
+  // process.stdout.write('\n');
+  // process.stdout.write('==================================================\n');
 
   // await downloadImages(ctx, mdast);
   await buildAnchors(mdast);
   // const children = await all(ctx, mdast);
 
-  Handlebars.registerPartial('heading', '<title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="{{children.0.value}}" type="h{{depth}}"/>');
-  Handlebars.registerPartial('paragraph', '<text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="{{#each children}}{{#encode}}{{> (whichPartial this.type) }}{{/encode}}{{/each}}"/>');
-  Handlebars.registerPartial('text', '{{value}}');
-  Handlebars.registerPartial('link', '<a href="{{url}}">{{children.0.text}}</a>');
+  Handlebars.registerPartial(
+    'heading',
+    '<title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="{{children.0.value}}" type="h{{depth}}"/>',
+  );
+  Handlebars.registerPartial(
+    'image',
+    '<image sling:resourceType="core/franklin/components/image/v1/image" jcr:primaryType="nt:unstructured" fileReference="{{url}}" alt="{{alt}}"/>',
+  );
+
+  Handlebars.registerPartial(
+    'link',
+    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{url}}" linkTitle="{{title}}" linkText="{{children.0.value}}" />',
+  );
+
+  Handlebars.registerPartial(
+    'strong',
+    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="primary" />',
+  );
+
+  Handlebars.registerPartial(
+    'emphasis',
+    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="secondary" />',
+  );
+
+  Handlebars.registerPartial('paragraphWrapper', (context) => {
+    const hast = toHast(context);
+    const html = toHtml(hast);
+    return `<text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="${Handlebars.Utils.escapeExpression(
+      html
+    )}"/>\n`;
+  });
+
+  Handlebars.registerPartial('gridTable', '<block></block>');
   Handlebars.registerHelper('whichPartial', (context) => context);
-  Handlebars.registerHelper('encode', function(options) {
+  Handlebars.registerHelper('encode', function (options) {
     return Handlebars.Utils.escapeExpression(options.fn(this));
   });
+
+  Handlebars.registerHelper('section', function (index, children, options) {
+    const section = { id: index, children: [] };
+    return `<section_${
+      section.id
+    } sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">\n${options.fn(this)}\n</section_${section.id}>\n`;
+  });
+
   // register page template
-  const pageTemplateXML = await readFile(path.resolve('./src/mdast2jcr', 'templates', 'page.xml'), 'utf-8');
+  const pageTemplateXML = await readFile(
+    path.resolve('./src/mdast2jcr', 'templates', 'page.xml'),
+    'utf-8'
+  );
   const template = Handlebars.compile(pageTemplateXML);
 
   const xml = template(mdast);

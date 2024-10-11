@@ -15,36 +15,39 @@
 import { inspect } from 'util';
 
 /**
- * Splits the sections in the mdast tree
- * @type PipelineStep
- * @param {PipelineState} state
+ * This method modifies the mdast tree in place. Given a flat list of nodes,
+ * gather the children of each section and wrap them in a section node.
+ * For example given a mdast tree of:
+ * [Heading, Text, Image, ThematicBreak, Text, ThematicBreak, Text] would
+ * result in [Section[Heading, Text, Image], Section[Text], Section[Text]].
  */
 export function splitSection(mdast) {
-  // filter all children that are break blocks
-  const dividers = mdast.children
+  // obtain the index of all thematicBreak nodes from the list of children
+  const thematicBreakIndexes = mdast.children
     .filter((node) => node.type === 'thematicBreak')
     // then get their index in the list of children
     .map((node) => mdast.children.indexOf(node));
 
   // find pairwise permutations of spaces between blocks
   // include the very start and end of the document
-  const starts = [0, ...dividers];
-  const ends = [...dividers, mdast.children.length];
+  const starts = [0, ...thematicBreakIndexes];
+  const ends = [...thematicBreakIndexes, mdast.children.length];
 
   // content.mdast.children = _.zip(starts, ends)
-  mdast.children = starts
+  const nodes = starts
     .map((k, i) => [k, ends[i]])
     // but filter out empty section
-    .filter(([start, end]) => start !== end)
+    .filter(([start, end]) => start !== end);
     // then return all nodes that are in between
-    .map(([start, end]) => {
-      // skip 'thematicBreak' nodes
-      const index = mdast.children[start].type === 'thematicBreak' ? start + 1 : start;
-      return {
-        type: 'section',
-        children: mdast.children.slice(index, end),
-      };
-    });
+
+  mdast.children = nodes.map(([start, end]) => {
+    // skip 'thematicBreak' nodes
+    const index = mdast.children[start].type === 'thematicBreak' ? start + 1 : start;
+    return {
+      type: 'section',
+      children: mdast.children.slice(index, end),
+    };
+  });
 
   // unwrap sole section directly on the root
   // if (mdast.children.length === 1 && mdast.children[0].type === 'section') {
@@ -71,11 +74,10 @@ export function wrapParagraphs(mdast) {
       const node = children[i];
 
       // Group paragraph and heading (depth >= 3) into the same paragraphWrapper
-      if (
-        node.type === 'paragraph' ||
-        node.type === 'list' ||
-        node.type === 'code' ||
-        (node.type === 'heading' && node.depth >= 3)
+      if (node.type === 'paragraph'
+        || node.type === 'list'
+        || node.type === 'code'
+        || (node.type === 'heading' && node.depth >= 3)
       ) {
         paragraphGroup.push(node);
 
@@ -132,7 +134,6 @@ export function unwrapImages(mdast) {
         process.stdout.write(inspect(node));
         process.stdout.write('\n');
         process.stdout.write('==================================================\n');
-
 
         // Traverse paragraph children to separate images and text nodes
         for (let i = 0; i < node.children.length; i += 1) {

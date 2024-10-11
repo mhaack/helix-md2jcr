@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 import { visit } from 'unist-util-visit';
+import { toString } from 'mdast-util-to-string';
+
 import { unified } from 'unified';
 import parse from 'rehype-parse';
 import { defaultHandlers, toMdast } from 'hast-util-to-mdast';
-// import inspect from 'unist-util-inspect';
 import tableHandler from './hast-table-handler.js';
 import tableCellHandler from './hast-table-cell-handler.js';
 
@@ -49,7 +50,9 @@ export function linkHandler(state, node) {
     url: state.resolve(String(properties.href || '') || null),
     title: properties.title ? String(properties.title) : null,
     anchor: properties.name ?? properties.id,
-    children,
+
+    // if the link has a child of type link, then we need to unwrap it
+    children: children.length === 1 && children[0].type === 'link' ? children[0].children : children,
   };
   state.patch(node, result);
   return result;
@@ -82,6 +85,8 @@ function unwrapParagraphs(node) {
  */
 function mdHandler(mdasts) {
   return (state, node) => {
+    // given the index property from the <markdown idx> element, return the
+    // corresponding mdast sub tree from the mdasts array.
     const { idx } = node.properties;
     return mdasts[+idx];
   };
@@ -105,6 +110,21 @@ function isPhrasingParent(node) {
 }
 
 /**
+ * Find the index of the last HTML node in the list of siblings, if no HTML node
+ * is found, return an index of 0;
+ * @param siblings list of siblings to search through to find the last HTML node
+ * @returns {number}
+ */
+export function locateIndexOfLastHtmlNode(siblings) {
+  const index = [...siblings]
+    .reverse()
+    .findIndex((sibling) => sibling.type === 'html');
+
+  // restore the order of the siblings array before returning the index
+  return index === -1 ? 0 : siblings.length - index - 1;
+}
+
+/**
  * Sanitizes html:
  * - collapses consecutive html content (simply concat all nodes until the last html sibling)
  * - parses and converts them to mdast again
@@ -120,27 +140,30 @@ export default function sanitizeHtml(tree) {
 
     // collapse html blocks
     if (node.type === 'html') {
-      // find last html block
-      let lastHtml = siblings.length - 1;
-      while (lastHtml >= index) {
-        if (siblings[lastHtml].type === 'html') {
-          break;
-        }
-        lastHtml -= 1;
-      }
+      // find the index of the last html node in the list of siblings
+      const lastHtmlIndex = locateIndexOfLastHtmlNode(siblings, index);
 
+      // get the node's value and store it in html variable
       let html = node.value;
-      if (lastHtml > index) {
-        // remove all html nodes
-        const removed = siblings.splice(index + 1, lastHtml - index);
 
-        // and append to html as special markdown element marker which is then handled in the
+      // if there are more html nodes after this one, remove them from the siblings array
+      if (lastHtmlIndex > index) {
+        // splice the siblings array to remove the nodes that are between the
+        // current node and the last html node, leaving the siblings array with
+        // only the nodes that come before the first HTML node, and include the
+        // first HTML node
+        const removed = siblings.splice(index + 1, lastHtmlIndex - index);
+
+        // append to html as special markdown element marker which is then handled in the
         // mdHandler for the `<markdown>` elements.
         removed.forEach((n) => {
           if (n.type === 'html' || n.type === 'text') {
             html += n.value;
           } else {
-            html += `<markdown idx="${mdInserts.length}">foo</markdown>`;
+            // eventually toMdast will be called, and when we encounter a markdown element
+            // we need to replace it with the actual markdown content, so store the index
+            // such that we can look it up in the mdInserts array later.
+            html += `<markdown idx="${mdInserts.length}"></markdown>`;
             mdInserts.push(n);
           }
         });

@@ -11,19 +11,34 @@
  */
 
 import path from 'path';
-import sanitizeHtml from './mdast-sanitize-html.js';
-import downloadImages from './mdast-download-images.js';
-import { buildAnchors } from './mdast-docx-anchors.js';
 import { inspect } from 'util';
 import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
-import { splitSection, unwrapImages as unwrapElements, wrapParagraphs } from './utils.js';
 import { select } from 'unist-util-select';
 import { toHast } from 'mdast-util-to-hast';
 import { toHtml } from 'hast-util-to-html';
+import xmlFormatter from 'xml-formatter';
+import { splitSection, unwrapImages as unwrapElements, wrapParagraphs } from './utils.js';
+import { buildAnchors } from './mdast-docx-anchors.js';
+import downloadImages from './mdast-download-images.js';
+import sanitizeHtml from './mdast-sanitize-html.js';
+import headingPartial from './partials/heading.js';
+import stringPartial from './partials/strong.js';
+import emphasisPartial from './partials/emphasis.js';
+import linkPartial from './partials/link.js';
+import paragraphWrapperPartial from './partials/paragraph.js';
+import nameHelper from './helpers/name-helper.js';
+import sectionHelper from './helpers/section-helper.js';
+import imagePartial from './partials/image.js';
+import encodeHelper from './helpers/encode-helper.js';
+import whichPartialHelper from './helpers/which-partial-helper.js';
+import gridTablePartial from './partials/grid-table.js';
+import blockQuotePartial from './partials/blockquote.js';
+import tablePartial from './partials/table.js';
 
 export default async function mdast2jcr(mdast, opts = {}) {
   const { log = console, resourceLoader, image2png } = opts;
+  const nameCounter = {};
 
   // const ctx = {
   //   style: {},
@@ -53,62 +68,39 @@ export default async function mdast2jcr(mdast, opts = {}) {
   // await downloadImages(ctx, mdast);
   await buildAnchors(mdast);
 
+  Handlebars.registerPartial('heading', headingPartial);
+  Handlebars.registerPartial('image', imagePartial);
+  Handlebars.registerPartial('link', linkPartial);
+  Handlebars.registerPartial('strong', stringPartial);
+  Handlebars.registerPartial('emphasis', emphasisPartial);
+  Handlebars.registerPartial('paragraphWrapper', paragraphWrapperPartial);
+  Handlebars.registerPartial('gridTable', gridTablePartial); // TODO
+  Handlebars.registerPartial('blockquote', blockQuotePartial); // TODO
+  Handlebars.registerPartial('table', tablePartial); // TODO
 
-  Handlebars.registerPartial(
-    'heading',
-    '<title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="{{children.0.value}}" type="h{{depth}}"/>\n',
-  );
-  Handlebars.registerPartial(
-    'image',
-    '<image sling:resourceType="core/franklin/components/image/v1/image" jcr:primaryType="nt:unstructured" fileReference="{{url}}" alt="{{alt}}"/>\n',
-  );
-
-  Handlebars.registerPartial(
-    'link',
-    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{url}}" linkTitle="{{title}}" linkText="{{children.0.value}}" />\n',
-  );
-
-  Handlebars.registerPartial(
-    'strong',
-    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="primary" />\n',
-  );
-
-  Handlebars.registerPartial(
-    'emphasis',
-    '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="secondary" />\n',
-  );
-
-  Handlebars.registerPartial('paragraphWrapper', (context) => {
-    const hast = toHast(context);
-    const html = toHtml(hast);
-    return `<text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="${Handlebars.Utils.escapeExpression(
-      html,
-    )}"/>\n`;
-  });
-
-  Handlebars.registerPartial('gridTable', '<block></block>\n'); // TODO
-  Handlebars.registerHelper('whichPartial', (context) => context);
-  Handlebars.registerHelper('encode', function (options) {
-    return Handlebars.Utils.escapeExpression(options.fn(this));
-  });
-
-  Handlebars.registerHelper('section', function (index, children, options) {
-    const section = { id: index, children: [] };
-    return `<section_${
-      section.id
-    } sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">\n${options.fn(this)}\n</section_${section.id}>\n`;
-  });
+  Handlebars.registerHelper('whichPartial', whichPartialHelper);
+  Handlebars.registerHelper('encode', encodeHelper);
+  Handlebars.registerHelper('nameHelper', nameHelper);
+  Handlebars.registerHelper('section', sectionHelper);
 
   // register page template
   const pageTemplateXML = await readFile(
     path.resolve('./src/mdast2jcr', 'templates', 'page.xml'),
     'utf-8',
   );
+
   const template = Handlebars.compile(pageTemplateXML);
 
-  const xml = template(mdast);
+  let xml = template(mdast);
+  xml = xmlFormatter(xml, {
+    indentation: '  ', // 2 spaces
+    filter: (node) => node.type !== 'Comment', // Remove comments
+    collapseContent: true,
+    lineSeparator: '\n',
+  });
 
   process.stdout.write(xml);
+
   process.stdout.write('\n');
   process.stdout.write('==================================================\n');
   return xml;

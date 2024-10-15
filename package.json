@@ -48,7 +48,8 @@
     "remark-parse": "11.0.0",
     "unified": "11.0.5",
     "unist-util-select": "^5.1.0",
-    "unist-util-visit": "5.0.0"
+    "unist-util-visit": "5.0.0",
+    "xml-formatter": "^3.6.3"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.7",

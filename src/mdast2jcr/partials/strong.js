@@ -16,7 +16,7 @@ function strong(context) {
 
   const { children: [child] } = context;
   const { children: [{ value }] } = child;
-  return `<button${uniqueName} sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="${child.url}" linkTitle="${child.title !== null ? child.title : ''}" linkText="${value}" linkType="primary" />\n`;
+  return `<button${uniqueName} sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="${child.url}" linkTitle="${child.title !== null ? child.title : ''}" linkText="${value}" linkType="primary" />`;
 }
 
 export default strong;

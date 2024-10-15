@@ -10,9 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-// eslint-disable-next-line no-unused-vars
+import Handlebars from 'handlebars';
+
 function emphasis(context) {
-  return '<button sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="{{children.0.url}}" linkTitle="{{children.0.title}}" linkText="{{children.0.children.0.value}}" linkType="secondary" />\n';
+  const uniqueName = Handlebars.helpers.nameHelper.call(context, 'button');
+
+  const { children: [child] } = context;
+  const { children: [{ value }] } = child;
+  return `<button${uniqueName} sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="${child.url}" linkTitle="${child.title !== null ? child.title : ''}" linkText="${value}" linkType="secondary" />\n`;
 }
 
 export default emphasis;

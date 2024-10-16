@@ -13,10 +13,21 @@ import Handlebars from 'handlebars';
 
 function strong(context) {
   const uniqueName = Handlebars.helpers.nameHelper.call(context, 'button');
-
   const { children: [child] } = context;
-  const { children: [{ value }] } = child;
-  return `<button${uniqueName} sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="${child.url}" linkTitle="${child.title}" linkText="${value}" linkType="primary" />\n`;
+  const { title, url, children: [{ value }] } = child;
+  const attributes = {
+    'sling:resourceType': 'core/franklin/components/button/v1/button',
+    'jcr:primaryType': 'nt:unstructured',
+    link: url,
+    linkText: value,
+    linkType: 'primary',
+  };
+  if (title != null) {
+    attributes.linkTitle = title;
+  }
+
+  const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
+  return `<button${uniqueName} ${attributesStr}  />`;
 }
 
 export default strong;

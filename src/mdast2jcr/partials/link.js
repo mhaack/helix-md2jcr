@@ -16,7 +16,18 @@ import Handlebars from 'handlebars';
 function link(context) {
   const uniqueName = Handlebars.helpers.nameHelper.call(context, 'button');
   const { url, title, children: [child] } = context;
-  return `<button${uniqueName} sling:resourceType="core/franklin/components/button/v1/button" jcr:primaryType="nt:unstructured" link="${url}" linkTitle="${title}" linkText="${child.value}" />\n`;
+  const attributes = {
+    'sling:resourceType': 'core/franklin/components/button/v1/button',
+    'jcr:primaryType': 'nt:unstructured',
+    link: url,
+    linkText: child.value,
+  };
+  if (title != null) {
+    attributes.linkTitle = title;
+  }
+
+  const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
+  return `<button${uniqueName} ${attributesStr}  />`;
 }
 
 export default link;

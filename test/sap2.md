@@ -39,11 +39,15 @@ On-premise is how most companies historically deployed their ERP systems. In thi
 
 Today businesses are embracing the cloud for its flexibility, ability to scale, and ease of innovation. Though still, for some companies, especially those in highly controlled industries, on-premise is a preferable approach due to legal, regulatory, or organizational constraints.
 
-+---------------+
-| Promo         |
-+===============+
-| ## Some Promo |
-+---------------+
++------------------------------------------------------------------------------------------------------------------------------+
+| Promo                                                                                                                        |
++==============================================================================================================================+
+| ### What's Top-of-mind for Boomers?                                                                                          |
+|                                                                                                                              |
+| Our sentiment research explores this group's needs as employees and consumers.                                               |
+|                                                                                                                              |
+| **[Read the story](https://main--builder-prospect-prod--sapudex.hlx.page/resources/boomers-want-value-integrity-substance)** |
++------------------------------------------------------------------------------------------------------------------------------+
 
 To understand the kind of effort this work requires, let’s look at a major player in the mining industry, for few industries affect the natural world more. For thousands of years, people have taken valuable materials from the earth, leaving [toxic desolation](https://www.sciencedirect.com/science/article/pii/S266675922200021X#:~:text=Contaminants%20in%20these%20areas%20are,arsenic%2C%20lead%2C%20and%20mercury.) in their wake once a site is plundered. Now the world’s largest mining companies are increasingly recognizing the need to do more than pursue sustainable practices and clean up retired mines. They’re partnering with affected communities to restore closed mine sites, allowing them to heal and rejuvenate.
 

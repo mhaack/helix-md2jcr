@@ -115,7 +115,7 @@ export function unwrapImages(mdast) {
     const newChildren = [];
 
     for (const node of section.children) {
-      if (node.type === 'paragraph') {
+      if (node.type === 'paragraph' || node.type === 'heading') {
         let currentText = [];
         const images = [];
 

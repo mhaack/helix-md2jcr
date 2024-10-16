@@ -22,7 +22,7 @@ function link(context) {
     link: url,
     linkText: child.value,
   };
-  if (title !== null) {
+  if (title != null) {
     attributes.linkTitle = title;
   }
 

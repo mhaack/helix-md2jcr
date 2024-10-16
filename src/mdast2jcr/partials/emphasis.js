@@ -23,7 +23,7 @@ function emphasis(context) {
     linkText: value,
     linkType: 'secondary',
   };
-  if (title !== null) {
+  if (title != null) {
     attributes.linkTitle = title;
   }
 

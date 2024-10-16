@@ -22,7 +22,7 @@ function strong(context) {
     linkText: value,
     linkType: 'primary',
   };
-  if (title !== null) {
+  if (title != null) {
     attributes.linkTitle = title;
   }
 

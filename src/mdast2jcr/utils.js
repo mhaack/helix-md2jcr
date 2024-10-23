@@ -65,10 +65,10 @@ export function wrapParagraphs(mdast) {
     const newChildren = [];
     let paragraphGroup = [];
 
-    // process.stdout.write('==================================================\n');
-    // process.stdout.write(inspect(section));
-    // process.stdout.write('\n');
-    // process.stdout.write('==================================================\n');
+    process.stdout.write('==================================================\n');
+    process.stdout.write(inspect(section));
+    process.stdout.write('\n');
+    process.stdout.write('==================================================\n');
 
     for (let i = 0; i < children.length; i += 1) {
       const node = children[i];
@@ -100,10 +100,10 @@ export function wrapParagraphs(mdast) {
     }
     section.children = newChildren;
 
-    // process.stdout.write('==================================================\n');
-    // process.stdout.write(inspect(section));
-    // process.stdout.write('\n');
-    // process.stdout.write('==================================================\n');
+    process.stdout.write('==================================================\n');
+    process.stdout.write(inspect(section));
+    process.stdout.write('\n');
+    process.stdout.write('==================================================\n');
   });
   return mdast;
 }
@@ -115,7 +115,7 @@ export function unwrapImages(mdast) {
     const newChildren = [];
 
     for (const node of section.children) {
-      if (node.type === 'paragraph' || node.type === 'heading') {
+      if (node.type === 'paragraph') {
         let currentText = [];
         const images = [];
 
@@ -130,10 +130,10 @@ export function unwrapImages(mdast) {
           }
         }
 
-        process.stdout.write('==================================================\n');
-        process.stdout.write(inspect(node));
-        process.stdout.write('\n');
-        process.stdout.write('==================================================\n');
+        // process.stdout.write('==================================================\n');
+        // process.stdout.write(inspect(node));
+        // process.stdout.write('\n');
+        // process.stdout.write('==================================================\n');
 
         // Traverse paragraph children to separate images and text nodes
         for (let i = 0; i < node.children.length; i += 1) {

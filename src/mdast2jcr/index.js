@@ -11,16 +11,11 @@
  */
 
 import path from 'path';
-import { inspect } from 'util';
 import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
-import { select } from 'unist-util-select';
-import { toHast } from 'mdast-util-to-hast';
-import { toHtml } from 'hast-util-to-html';
 import xmlFormatter from 'xml-formatter';
 import { splitSection, unwrapImages as unwrapElements, wrapParagraphs } from './utils.js';
 import { buildAnchors } from './mdast-docx-anchors.js';
-import downloadImages from './mdast-download-images.js';
 import sanitizeHtml from './mdast-sanitize-html.js';
 import headingPartial from './partials/heading.js';
 import stringPartial from './partials/strong.js';
@@ -36,9 +31,10 @@ import gridTablePartial from './partials/grid-table.js';
 import blockQuotePartial from './partials/blockquote.js';
 import tablePartial from './partials/table.js';
 
+// eslint-disable-next-line no-unused-vars
 export default async function mdast2jcr(mdast, opts = {}) {
-  const { log = console, resourceLoader, image2png } = opts;
-  const nameCounter = {};
+  // const { log = console, resourceLoader, image2png } = opts;
+  // const nameCounter = {};
 
   // const ctx = {
   //   style: {},
@@ -59,11 +55,6 @@ export default async function mdast2jcr(mdast, opts = {}) {
   mdast = unwrapElements(mdast);
   // eslint-disable-next-line no-param-reassign
   mdast = wrapParagraphs(mdast);
-
-  // process.stdout.write('==================================================\n');
-  // process.stdout.write(inspect(mdast));
-  // process.stdout.write('\n');
-  // process.stdout.write('==================================================\n');
 
   // await downloadImages(ctx, mdast);
   await buildAnchors(mdast);

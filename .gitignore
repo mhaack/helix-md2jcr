@@ -22,4 +22,3 @@ tokens.json
 document.docx
 document.md
 .convert
-test/fixtures/*.xml

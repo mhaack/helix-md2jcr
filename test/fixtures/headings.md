@@ -1,9 +1,17 @@
-This link was not working unless we unwrap it
+# simple headings
 
-# Header with Link <b><a href="https://www.richardianson.com">www.richardianson.com</a></b>
+Some text
 
-# Header with Link [www.richardianson.com](https://www.richardianson.com)
+## heading 2
 
-# Header _Italic_ **Bold** [Link](https://example.com) `Code` ![Image](image.png) <em>HTML Italic</em>
+### heading 3
 
-Second paragraph
+#### heading 4
+
+##### heading 5
+
+## heading with link <a href="https://www.richardianson.com">www.richardianson.com</a>
+
+## heading with bold format **Bold**
+
+## heading with italic format _Italic_

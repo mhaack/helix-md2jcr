@@ -12,8 +12,6 @@
 
 /* eslint-disable no-param-reassign */
 
-import { inspect } from 'util';
-
 /**
  * This method modifies the mdast tree in place. Given a flat list of nodes,
  * gather the children of each section and wrap them in a section node.
@@ -115,7 +113,7 @@ export function unwrapImages(mdast) {
     const newChildren = [];
 
     for (const node of section.children) {
-      if (node.type === 'paragraph' || node.type === 'heading') {
+      if (node.type === 'paragraph') {
         let currentText = [];
         const images = [];
 
@@ -130,10 +128,10 @@ export function unwrapImages(mdast) {
           }
         }
 
-        process.stdout.write('==================================================\n');
-        process.stdout.write(inspect(node));
-        process.stdout.write('\n');
-        process.stdout.write('==================================================\n');
+        // process.stdout.write('==================================================\n');
+        // process.stdout.write(inspect(node));
+        // process.stdout.write('\n');
+        // process.stdout.write('==================================================\n');
 
         // Traverse paragraph children to separate images and text nodes
         for (let i = 0; i < node.children.length; i += 1) {

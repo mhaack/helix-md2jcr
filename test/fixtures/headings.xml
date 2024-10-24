@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
+  <jcr:content cq:template="/libs/core/franklin/templates/page" jcr:primaryType="cq:PageContent" sling:resourceType="core/franklin/components/page/v1/page" jcr:title="Sustainability | Sustainable Business Topics &amp; Trends | SAP" jcr:description="Learn how sustainability initiatives bring value across your business." image="/content/dam/sap/topics/media_12fad65cf53b722af46da922c38101b763d1113eb.png">
+    <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
+      <section_0 sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="simple headings" type="h1"/>
+        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;div&gt;&lt;p&gt;Some text&lt;/p&gt;&lt;/div&gt;"/>
+        <title_1 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="heading 2" type="h2"/>
+        <text_1 sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;div&gt;&lt;h3&gt;heading 3&lt;/h3&gt;&lt;h4&gt;heading 4&lt;/h4&gt;&lt;h5&gt;heading 5&lt;/h5&gt;&lt;/div&gt;"/>
+        <title_2 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="heading with link <a href=" https://www.richardianson.com">www.richardianson.com</a>" type="h2"/>
+        <title_3 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="heading with bold format <strong>Bold</strong>" type="h2"/>
+        <title_4 sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="heading with italic format <em>Italic</em>" type="h2"/>
+      </section_0>
+    </root>
+  </jcr:content>
+</jcr:root>

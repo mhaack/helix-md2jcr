@@ -33,6 +33,10 @@ describe('md2jcr Tests', () => {
     await test('headings');
   });
 
+  it('converts buttons & links', async () => {
+    await test('buttons');
+  });
+
   it('converts a document with default-content', async () => {
     await test('default-content-only');
   });

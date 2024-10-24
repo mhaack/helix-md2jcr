@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 import { visit } from 'unist-util-visit';
-import { toString } from 'mdast-util-to-string';
-
 import { unified } from 'unified';
 import parse from 'rehype-parse';
 import { defaultHandlers, toMdast } from 'hast-util-to-mdast';

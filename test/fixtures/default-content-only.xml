@@ -2,7 +2,7 @@
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
   <jcr:content cq:template="/libs/core/franklin/templates/page" jcr:primaryType="cq:PageContent" sling:resourceType="core/franklin/components/page/v1/page" jcr:title="Sustainability | Sustainable Business Topics &amp; Trends | SAP" jcr:description="Learn how sustainability initiatives bring value across your business." image="/content/dam/sap/topics/media_12fad65cf53b722af46da922c38101b763d1113eb.png">
     <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
-      <section_0 sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+      <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
         <title sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="Getting started with Helix - Developer Tutorial" type="h1"/>
         <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;div&gt;&lt;p&gt;This tutorial should have you up and running with your AEM Helix projects in 10 - 20 minutes to a place where you can create, preview and publish your own content and create your styling and add new blocks.&lt;/p&gt;&lt;p&gt;Pre-requisites:&lt;/p&gt;&lt;ol&gt;
         &lt;li&gt;You have a github account, and understand git basics&lt;/li&gt;
@@ -55,7 +55,7 @@
         hlx up
         &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;which will open up &lt;code&gt;http://localhost:3000/ &lt;/code&gt;and you are ready to make changes.&lt;br&gt;
         A good place to start is the blocks folder which is where most of the styling and code will live for you helix project. Simply make a change in a &lt;code&gt;.css&lt;/code&gt; or &lt;code&gt;.js &lt;/code&gt;and you should see the changes in your browser immediately.&lt;/p&gt;&lt;p&gt;Once you are are ready to push your changes, simply git add, commit and push and your code is on your preview (&lt;code&gt;https://&amp;#x3C;branch&gt;--&amp;#x3C;repo&gt;--&amp;#x3C;owner&gt;.hlx.page/&lt;/code&gt;) and production (&lt;code&gt;https://&amp;#x3C;branch&gt;--&amp;#x3C;repo&gt;--&amp;#x3C;owner&gt;.hlx.live/&lt;/code&gt;) site.&lt;/p&gt;&lt;/div&gt;"/>
-      </section_0>
+      </section>
     </root>
   </jcr:content>
 </jcr:root>

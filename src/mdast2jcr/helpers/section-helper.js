@@ -9,9 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import Handlebars from 'handlebars';
+
 function sectionHelper(index, children, options) {
   const section = { id: index, children: [] };
-  return `<section_${section.id} sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">\n${options.fn(this)}\n</section_${section.id}>\n`;
+  const uniqueName = Handlebars.helpers.nameHelper.call(this, 'section');
+  return `<section${uniqueName} sling:resourceType="core/franklin/components/section/v1/section" 
+            jcr:primaryType="nt:unstructured">\n${options.fn(this)}\n</section_${section.id}>\n`;
 }
 
 export default sectionHelper;

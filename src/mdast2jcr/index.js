@@ -22,7 +22,7 @@ import stringPartial from './partials/strong.js';
 import emphasisPartial from './partials/emphasis.js';
 import linkPartial from './partials/link.js';
 import paragraphWrapperPartial from './partials/paragraph.js';
-import nameHelper from './helpers/name-helper.js';
+import nameHelper, { nameReset } from './helpers/name-helper.js';
 import sectionHelper from './helpers/section-helper.js';
 import imagePartial from './partials/image.js';
 import encodeHelper from './helpers/encode-helper.js';
@@ -73,6 +73,9 @@ export default async function mdast2jcr(mdast, opts = {}) {
   Handlebars.registerHelper('encode', encodeHelper);
   Handlebars.registerHelper('nameHelper', nameHelper);
   Handlebars.registerHelper('section', sectionHelper);
+
+  // reset the name helper counter
+  nameReset();
 
   // register page template
   const pageTemplateXML = await readFile(

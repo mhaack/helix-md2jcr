@@ -1,9 +1,5 @@
 # simple headings
 
-## heading with link <a href="https://adobe.com">Adobe</a>.
-
-## heading with a link [Adobe](https://adobe.com).
-
 Some text
 
 ## heading 2
@@ -16,10 +12,14 @@ Some text
 
 # headings with extra styles
 
-## heading with link <a href="https://adobe.com">Adobe</a>.
+## heading with a md link <a href="https://adobe.com">Adobe</a>.
 
-## heading with a link [Adobe](https://adobe.com).
+## heading with a HTML link [Adobe](https://adobe.com).
 
 ## heading with bold format **Bold**
 
 ## heading with italic format _Italic_
+
+## heading with `code`
+
+## heading with HTML <span>some text</span>

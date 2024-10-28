@@ -15,7 +15,6 @@ import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
 import xmlFormatter from 'xml-formatter';
 import { splitSection, unwrapImages as unwrapElements, wrapParagraphs } from './utils.js';
-import { buildAnchors } from './mdast-docx-anchors.js';
 import sanitizeHtml from './mdast-sanitize-html.js';
 import headingPartial from './partials/heading.js';
 import stringPartial from './partials/strong.js';
@@ -57,7 +56,6 @@ export default async function mdast2jcr(mdast, opts = {}) {
   mdast = wrapParagraphs(mdast);
 
   // await downloadImages(ctx, mdast);
-  await buildAnchors(mdast);
 
   Handlebars.registerPartial('heading', headingPartial);
   Handlebars.registerPartial('image', imagePartial);

@@ -41,6 +41,10 @@ describe('md2jcr Tests', () => {
     await test('sections');
   });
 
+  it('converts images', async () => {
+    await test('images');
+  });
+
   it('converts a document with default-content', async () => {
     await test('default-content-only');
   });

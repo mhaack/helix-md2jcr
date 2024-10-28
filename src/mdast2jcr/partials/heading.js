@@ -44,7 +44,8 @@ function heading(context) {
   let title = '';
   // Traverse the children of the heading to build the title, there can be
   // multiple children that contribute to the title like text, link, strong, etc.
-  title = context.children.map(parseInlineElements).join('');
+
+  title = Handlebars.Utils.escapeExpression(context.children.map(parseInlineElements).join(''));
 
   return `<title${uniqueName} sling:resourceType="core/franklin/components/title/v1/title" jcr:primaryType="nt:unstructured" jcr:title="${title}" type="h${depth}"/>\n`;
 }

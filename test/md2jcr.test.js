@@ -29,6 +29,10 @@ describe('md2jcr Tests', () => {
     await test('simple');
   });
 
+  it('convert text paragraphs', async () => {
+    await test('paragraphs');
+  });
+
   it('converts headings', async () => {
     await test('headings');
   });
@@ -39,6 +43,10 @@ describe('md2jcr Tests', () => {
 
   it('converts multiple sections', async () => {
     await test('sections');
+  });
+
+  it('converts images', async () => {
+    await test('images');
   });
 
   it('converts a document with default-content', async () => {

@@ -10,8 +10,16 @@ Some text
 
 ##### heading 5
 
-## heading with link <a href="https://www.richardianson.com">www.richardianson.com</a>
+# headings with extra styles
+
+## heading with a md link <a href="https://adobe.com">Adobe</a>.
+
+## heading with a HTML link [Adobe](https://adobe.com).
 
 ## heading with bold format **Bold**
 
 ## heading with italic format _Italic_
+
+## heading with `code`
+
+## heading with HTML <span>some text</span>

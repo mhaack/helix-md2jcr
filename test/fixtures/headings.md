@@ -20,6 +20,12 @@ Some text
 
 ## heading with italic format _Italic_
 
+## heading with italic format _Italic_ and **Bold**
+
+## **100% bold heading**
+
+## _100% italic heading_
+
 ## heading with `code`
 
 ## heading with HTML <span>some text</span>

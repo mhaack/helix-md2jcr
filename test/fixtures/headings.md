@@ -12,13 +12,19 @@ Some text
 
 # headings with extra styles
 
-## heading with a md link <a href="https://adobe.com">Adobe</a>.
+## heading with a HTML link <a href="https://adobe.com">Adobe</a>.
 
-## heading with a HTML link [Adobe](https://adobe.com).
+## heading with a MD link [Adobe](https://adobe.com).
 
 ## heading with bold format **Bold**
 
 ## heading with italic format _Italic_
+
+## heading with italic format _Italic_ and **Bold**
+
+## **100% bold heading**
+
+## _100% italic heading_
 
 ## heading with `code`
 

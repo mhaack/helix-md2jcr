@@ -72,10 +72,13 @@ export function wrapParagraphs(mdast) {
       const node = children[i];
 
       // Group paragraph and heading (depth >= 3) into the same paragraphWrapper
+      // group strong and emphasis into the same paragraphWrapper if they are not a button
       if (node.type === 'paragraph'
         || node.type === 'list'
         || node.type === 'code'
         || (node.type === 'heading' && node.depth >= 3)
+        || (node.type === 'strong' && (node.children.length !== 1 || (node.children.length === 1 && node.children[0].type !== 'link')))
+        || (node.type === 'emphasis' && (node.children.length !== 1 || (node.children.length === 1 && node.children[0].type !== 'link')))
       ) {
         paragraphGroup.push(node);
 

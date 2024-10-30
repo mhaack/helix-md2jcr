@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/* eslint-disable no-param-reassign */
+
 import path from 'path';
 import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
@@ -30,32 +32,20 @@ import gridTablePartial from './partials/grid-table.js';
 import blockQuotePartial from './partials/blockquote.js';
 import tablePartial from './partials/table.js';
 
-// eslint-disable-next-line no-unused-vars
-export default async function mdast2jcr(mdast, opts = {}) {
-  // const { log = console, resourceLoader, image2png } = opts;
-  // const nameCounter = {};
-
-  // const ctx = {
-  //   style: {},
-  //   paragraphStyle: '',
-  //   images: {},
-  //   listLevel: -1,
-  //   lists: [],
-  //   log,
-  //   image2png,
-  //   resourceLoader,
-  // };
-
-  // eslint-disable-next-line no-param-reassign
+/**
+ * Converts a markdown AST to JCR XML.  This function is the main entry point
+ * for the mdast2jcr module. The function takes a markdown AST and an options
+ * object as input and returns a promise that resolves to a string containing
+ * the JCR XML representation of the markdown AST.
+ * @param mdast The markdown AST to convert to JCR XML.
+ * @param {Mdast2JCROptions} options An options object that can be used to customize the conversion.
+ * @returns {Promise<string>}
+ */
+export default async function mdast2jcr(mdast, options = {}) {
   mdast = sanitizeHtml(mdast);
-  // eslint-disable-next-line no-param-reassign
   mdast = splitSection(mdast);
-  // eslint-disable-next-line no-param-reassign
   mdast = unwrapElements(mdast);
-  // eslint-disable-next-line no-param-reassign
   mdast = wrapParagraphs(mdast);
-
-  // await downloadImages(ctx, mdast);
 
   Handlebars.registerPartial('heading', headingPartial);
   Handlebars.registerPartial('image', imagePartial);
@@ -83,7 +73,14 @@ export default async function mdast2jcr(mdast, opts = {}) {
 
   const template = Handlebars.compile(pageTemplateXML);
 
-  let xml = template(mdast);
+  const ctx = {
+    models: options.models,
+    definition: options.definition,
+    children: mdast.children,
+  };
+
+  let xml = template(ctx);
+
   xml = xmlFormatter(xml, {
     indentation: '  ', // 2 spaces
     filter: (node) => node.type !== 'Comment', // Remove comments

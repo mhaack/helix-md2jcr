@@ -9,12 +9,24 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { Mdast2JCROptions } from '../mdast2jcr'
+import image from './image.js';
+import link from './link.js';
+import text from './text.js';
 
 /**
- * Convert a Markdown document to a JCR XML document.
- * @param {string} md The Markdown document
- * @param {Mdast2JCROptions} options options
- * @returns {Promise<Buffer>} the docx
+ * List of handlers that will be used to convert mdast nodes to JCR nodes.
+ * @type {{getProperties: (function(*): {src: *, alt: *}), supports: (function(*): boolean)}[]}
  */
-export default function md2jcr(md:string, options?: Mdast2JCROptions): Promise<Buffer>;
+const handlers = {
+  image,
+  link,
+  text,
+};
+
+export function getHandler(child) {
+  const [name, handler] = Object.entries(handlers).find(([, entry]) => entry.supports(child)) || [];
+  if (name) {
+    return { name, ...handler };
+  }
+  return undefined;
+}

@@ -17,6 +17,12 @@ import { remarkMatter } from '@adobe/helix-markdown-support/matter';
 import remarkGridTable from '@adobe/remark-gridtables';
 import mdast2jcr from '../mdast2jcr/index.js';
 
+/**
+ * Convert markdown to JCR XML.
+ * @param md {string} The markdown content.
+ * @param opts {Mdast2JCROptions} Options.
+ * @return {Promise<String>} The JCR XML.
+ */
 export default async function md2jcr(md, opts) {
   const mdast = unified()
     .use(remark, { position: false })

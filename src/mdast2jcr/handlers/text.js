@@ -9,12 +9,21 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { Mdast2JCROptions } from '../mdast2jcr'
+import { find } from 'unist-util-find';
 
-/**
- * Convert a Markdown document to a JCR XML document.
- * @param {string} md The Markdown document
- * @param {Mdast2JCROptions} options options
- * @returns {Promise<Buffer>} the docx
- */
-export default function md2jcr(md:string, options?: Mdast2JCROptions): Promise<Buffer>;
+const text = {
+  supports: (node) => find(node, { type: 'text' }) !== undefined,
+
+  condition: (field, fields) => field.component === 'text' || fields.find((f) => f.name === `${field.name}Text`),
+
+  getProperties: (child) => {
+    const node = find(child, { type: 'text' });
+
+    return {
+      text: node.value,
+    };
+  },
+
+};
+
+export default text;

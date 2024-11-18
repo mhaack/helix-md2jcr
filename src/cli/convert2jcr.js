@@ -52,9 +52,11 @@ async function convert(mdFile) {
   const fileJcrXML = path.resolve(dir, `${base}.xml`);
   const modelFile = path.resolve(dir, `${base}-models.json`);
   const definitionFile = path.resolve(dir, `${base}-definitions.json`);
+  const filtersFile = path.resolve(dir, `${base}-filters.json`);
 
   const modelJson = await readJsonFile(modelFile);
   const definitionJson = await readJsonFile(definitionFile);
+  const filtersJson = await readJsonFile(filtersFile);
 
   const md = await readFile(mdFile, 'utf-8');
 
@@ -64,6 +66,7 @@ async function convert(mdFile) {
   const opts = {
     models: modelJson,
     definition: definitionJson,
+    filters: filtersJson,
   };
 
   const xml = await md2jcr(md, opts);

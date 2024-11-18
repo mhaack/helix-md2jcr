@@ -26,36 +26,8 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "teaserText_subtitle",
-        "label": "Sub Title",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "teaserText_title",
-        "label": "Title",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "teaserText_description",
-        "label": "Title",
-        "value": ""
-      },
-      {
-        "component": "reference",
-        "valueType": "string",
-        "name": "teaserText_src",
-        "label": "Src",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "teaserText_link",
-        "label": "Link",
+        "name": "classes",
+        "label": "Classes",
         "value": ""
       }
     ]

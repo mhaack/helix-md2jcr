@@ -4,7 +4,7 @@
             {{#each children }}
                 {{#section @index children }}
                 {{#each children }}
-                    {{> (whichPartial this.type) models=../../models definition=../../definition}}
+                    {{> (whichPartial this.type) models=../../models definition=../../definition filters=../../filters}}
                 {{/each}}
                 {{/section}}
             {{/each}}

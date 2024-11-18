@@ -76,6 +76,7 @@ export default async function mdast2jcr(mdast, options = {}) {
   const ctx = {
     models: options.models,
     definition: options.definition,
+    filters: options.filters,
     children: mdast.children,
   };
 

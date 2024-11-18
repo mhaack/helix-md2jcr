@@ -83,6 +83,15 @@ export interface DefinitionDef {
   groups: Array<GroupDef>;
 }
 
+export interface Filter {
+  id: string,
+  components: Array<string>;
+}
+
+export interface FiltersDef {
+  filters: Array<Filter>;
+}
+
 /**
  * Options object for the mdast to jcr conversion.
  */
@@ -96,6 +105,11 @@ export interface Mdast2JCROptions {
    * A definition object containing groups and components.
    */
   definition: DefinitionDef;
+
+  /**
+   * Defines the filters.
+   */
+  filters: FiltersDef;
 }
 
 /**

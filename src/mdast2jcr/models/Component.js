@@ -22,7 +22,7 @@ class Component {
    * @param {string} filterId
    * @param {boolean} keyValue
    */
-  constructor(name, modelId, filterId, keyValue) {
+  constructor(name, modelId, filterId, keyValue = false) {
     this._filterId = filterId;
     this._modelId = modelId;
     this._keyValue = keyValue;

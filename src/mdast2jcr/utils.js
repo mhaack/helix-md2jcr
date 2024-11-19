@@ -179,3 +179,9 @@ export function unwrapImages(mdast) {
   });
   return mdast;
 }
+
+export function encodeHTMLEntities(str) {
+  return str ? str.replace(/&(?!amp;|lt;|gt;|quot;|apos;|#\d+;)/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;') : '';
+}

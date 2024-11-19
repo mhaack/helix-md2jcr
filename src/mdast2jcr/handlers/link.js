@@ -18,9 +18,10 @@ const link = {
 
   getProperties: (child) => {
     const node = find(child, { type: 'link' });
-
+    const text = find(node, { type: 'text' });
     return {
       href: node.url,
+      text: text.value,
     };
   },
 

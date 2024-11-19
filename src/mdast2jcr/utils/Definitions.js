@@ -28,7 +28,7 @@ function getAllComponents(definitions) {
       component.title,
       component.plugins?.xwalk?.page?.template?.model,
       component.plugins?.xwalk?.page?.template?.filter,
-      component.plugins?.xwalk?.page?.template?.keyValue,
+      component.plugins?.xwalk?.page?.template?.['key-value'],
     ));
 }
 

@@ -37,14 +37,12 @@ function getMainFields(fields) {
   const itemNames = fields.map((item) => item.name);
 
   return fields.filter((item) => {
-    const itemNameWithoutSuffix = suffixes.reduce((name, suffix) => {
-      if (name.endsWith(suffix)) {
-        return name.slice(0, -suffix.length);
-      }
-      return name;
-    }, item.name);
+    const itemNameWithoutSuffix = suffixes.reduce(
+      (name, suffix) => (name.endsWith(suffix) ? name.slice(0, -suffix.length) : name),
+      item.name,
+    );
 
-    return !(itemNames.includes(itemNameWithoutSuffix) && itemNameWithoutSuffix !== item.name);
+    return !itemNames.includes(itemNameWithoutSuffix) || itemNameWithoutSuffix === item.name;
   });
 }
 

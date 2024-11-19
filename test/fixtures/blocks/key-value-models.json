@@ -1,0 +1,27 @@
+[
+  {
+    "id": "key-values",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title"
+      },
+      {
+        "component": "text",
+        "name": "description",
+        "label": "Description"
+      },
+      {
+        "component": "text",
+        "name": "row-3",
+        "label": "Row 3"
+      },
+      {
+        "component": "text",
+        "name": "row-4",
+        "label": "Row 4"
+      }
+    ]
+  }
+]

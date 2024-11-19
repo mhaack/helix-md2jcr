@@ -8,19 +8,39 @@
         "label": "Title"
       },
       {
-        "component": "text",
+        "component": "richtext",
         "name": "description",
         "label": "Description"
       },
       {
         "component": "text",
-        "name": "row-3",
+        "name": "heading",
         "label": "Row 3"
       },
       {
         "component": "text",
-        "name": "row-4",
-        "label": "Row 4"
+        "name": "headingType",
+        "label": "Heading Type"
+      },
+      {
+        "component": "text",
+        "name": "link",
+        "label": "Link"
+      },
+      {
+        "component": "text",
+        "name": "linkTitle",
+        "label": "Link Title"
+      },
+      {
+        "component": "text",
+        "name": "linkText",
+        "label": "Link Text"
+      },
+      {
+        "component": "text",
+        "name": "linkType",
+        "label": "Link Type"
       }
     ]
   }

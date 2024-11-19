@@ -14,6 +14,16 @@ import { find } from 'unist-util-find';
 const link = {
   supports: (node) => find(node, { type: 'link' }) !== undefined,
 
+  getType: (parentNode) => {
+    if (find(parentNode, { type: 'emphasis' })) {
+      return 'secondary';
+    }
+    if (find(parentNode, { type: 'strong' })) {
+      return 'primary';
+    }
+    return '';
+  },
+
   condition: (field, fields) => field.component === 'text' || fields.find((f) => f.name === `${field.name}Text`),
 
   getProperties: (child) => {

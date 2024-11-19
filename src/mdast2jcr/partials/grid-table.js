@@ -13,14 +13,14 @@ import { find } from 'unist-util-find';
 import { toString } from 'mdast-util-to-string';
 import Handlebars from 'handlebars';
 import { getComponentByTitle, getModelId } from '../utils/Definitions.js';
-import {
-  findModelById, getField, groupModelFields, getMainFields,
-} from '../utils/Models.js';
+import { findModelById, getField, getMainFields, groupModelFields, } from '../utils/Models.js';
 import { findAll } from '../utils/mdast.js';
 import { getHandler } from '../handlers/index.js';
 import link from '../handlers/link.js';
 import image from '../handlers/image.js';
-import { encodeHTMLEntities } from '../utils.js';
+import { encodeHtml, encodeHTMLEntities } from '../utils.js';
+import { toHast } from 'mdast-util-to-hast';
+import { toHtml } from 'hast-util-to-html';
 
 /**
  * @typedef {import('../index.js').FieldDef} Field
@@ -88,17 +88,19 @@ function getBlockDetails(mdast, definition) {
   return null;
 }
 
-function collapseField(id, fields, node, properties = {}) {
+function collapseField(id, fields, node, parentNode, properties = {}) {
   /* eslint-disable no-param-reassign */
   const suffixes = ['Alt', 'Type', 'MimeType', 'Text', 'Title'];
   suffixes.forEach((suffix) => {
     const field = fields.find((f) => f.name === `${id}${suffix}`);
     if (field) {
       if (suffix === 'Type') {
-        if (node?.tagName.startsWith('h')) {
-          properties[field.name] = node?.tagName?.toLowerCase();
+        // a heading can have a type like h1, h2
+        if (node.type === 'heading') {
+          properties[field.name] = `h${node.depth}`;
         } else if (link.supports(node)) {
-          properties[field.name] = link.getType(node);
+          const type = link.getType(parentNode);
+          properties[field.name] = type;
         }
       } else if (link.supports(node)) { // buttons / links
         if (suffix === 'Text') {
@@ -204,7 +206,10 @@ function extractProperties(mdast, model, mode) {
   // the first cells is the header row, so we skip it
   const [, ...nodes] = findAll(mdast, (node) => node.type === 'gtCell', true);
 
+  // if we are in keyValue mode, then we can throw away the key columns
+  // this will leave us with just the value columns
   if (mode === 'keyValue') {
+    // eslint-disable-next-line no-plusplus
     for (let i = nodes.length - 1; i >= 0; i--) {
       if (i % 2 === 0) {
         nodes.splice(i, 1);
@@ -234,7 +239,9 @@ function extractProperties(mdast, model, mode) {
       const p = extractGroupProperties(mdast, field, nodes, properties);
       Object.assign(properties, p);
     } else if (field.component === 'richtext') {
-      properties[field.name] = 'TODO: richtext';
+      // obtain the html by taking the mdast and converting it to hast and then to html
+      const hast = toHast(currentNode);
+      properties[field.name] = encodeHtml(toHtml(hast));
     } else if (field.component === 'reference') {
       const imageNode = find(currentNode, { type: 'image' });
       properties[field.name] = imageNode.url;
@@ -242,9 +249,14 @@ function extractProperties(mdast, model, mode) {
       removeField(field, fields);
     } else {
       const linkNode = find(currentNode, { type: 'link' });
+      const headlineNode = find(currentNode, { type: 'heading' });
       if (linkNode) {
         properties[field.name] = linkNode.url;
-        collapseField(field.name, fields, linkNode, properties);
+        collapseField(field.name, fields, linkNode, currentNode, properties);
+        removeField(field, fields);
+      } else if (headlineNode) {
+        properties[field.name] = encodeHTMLEntities(toString(headlineNode));
+        collapseField(field.name, fields, headlineNode, properties);
         removeField(field, fields);
       } else {
         let value = encodeHTMLEntities(toString(currentNode));

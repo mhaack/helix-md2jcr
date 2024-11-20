@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
+  <jcr:content cq:template="/libs/core/franklin/templates/page" jcr:primaryType="cq:PageContent" sling:resourceType="core/franklin/components/page/v1/page" jcr:title="Template Title" jcr:description="Template Description">
+    <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
+      <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" classes="dark" image="https://main--hubblehomes-com--aemsites.hlx.page/media_18bd35bfabf1ee9ca848b5f6ee811b9429fe8d39e.jpeg#width=1920&height=800" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe"></block>
+      </section>
+    </root>
+  </jcr:content>
+</jcr:root>

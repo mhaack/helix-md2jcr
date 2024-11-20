@@ -11,17 +11,19 @@
  */
 
 /**
- * finaAll goes through the children of a node searching for nodes that match a
+ * findAll goes through the children of a node searching for nodes that match a
  * test function.
  *
  * @param node the node to search through.
  * @param test the test function
+ * @param flatten if true, the function will return the children of the matching nodes, without
+ * their parent.
  * @return {*[]} an array of nodes that match the test function.
  */
 function findAll(node, test, flatten = false) {
   // given the root of the mdast tree, find all the nodes that are identified by the test function
   const results = [];
-  console.log(node.type);
+
   if (test(node)) {
     results.push(node);
     return results;

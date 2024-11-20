@@ -19,9 +19,7 @@ import {
   findModelById, getField, getMainFields, groupModelFields,
 } from '../utils/Models.js';
 import { findAll } from '../utils/mdast.js';
-import { getHandler } from '../handlers/index.js';
 import link from '../handlers/link.js';
-import image from '../handlers/image.js';
 import { encodeHtml, encodeHTMLEntities } from '../utils.js';
 
 /**
@@ -85,6 +83,15 @@ function getBlockDetails(mdast, definition) {
   return null;
 }
 
+/**
+ * Process the field and collapse the field into the properties object.
+ * @param id {string} - the id of the field
+ * @param fields {Array<Field>} - the fields array
+ * @param node {Node} - the node to process
+ * @param parentNode {Node} - the parent node if necessary to inspect the child's parent for details
+ * @param properties {object} - the properties object
+ * @return {*}
+ */
 function collapseField(id, fields, node, parentNode, properties) {
   /* eslint-disable no-param-reassign */
   const suffixes = ['Alt', 'Type', 'MimeType', 'Text', 'Title'];
@@ -126,6 +133,41 @@ function collapseField(id, fields, node, parentNode, properties) {
   return properties;
 }
 
+function extraPropertiesForNode(field, currentNode, properties, fields) {
+  if (field.component === 'richtext') {
+    // obtain the html by taking the mdast and converting it to hast and then to html
+    const hast = toHast(currentNode);
+    properties[field.name] = encodeHtml(toHtml(hast));
+  } else if (field.component === 'reference') {
+    const imageNode = find(currentNode, { type: 'image' });
+    properties[field.name] = imageNode.url;
+    collapseField(field.name, fields, imageNode, null, properties);
+    removeField(field, fields);
+  } else {
+    const linkNode = find(currentNode, { type: 'link' });
+    const headlineNode = find(currentNode, { type: 'heading' });
+    if (linkNode) {
+      properties[field.name] = linkNode.url;
+      collapseField(field.name, fields, linkNode, currentNode, properties);
+      removeField(field, fields);
+    } else if (headlineNode) {
+      properties[field.name] = encodeHTMLEntities(toString(headlineNode));
+      collapseField(field.name, fields, headlineNode, null, properties);
+      removeField(field, fields);
+    } else {
+      let value = encodeHTMLEntities(toString(currentNode));
+      if (field.component === 'multiselect' || field.component === 'aem-tag') {
+        value = `[${value.split(',')
+          .map((v) => v.trim())
+          .join(',')}]`;
+      }
+      if (value) {
+        properties[field.name] = value;
+      }
+    }
+  }
+}
+
 // the field is a group and will have children
 function extractGroupProperties(mdast, groupField, nodes, properties) {
   const props = { ...properties };
@@ -147,38 +189,7 @@ function extractGroupProperties(mdast, groupField, nodes, properties) {
 
     const currentNode = nodes[idx];
 
-    if (field.component === 'richtext') {
-      // obtain the html by taking the mdast and converting it to hast and then to html
-      const hast = toHast(currentNode);
-      properties[field.name] = encodeHtml(toHtml(hast));
-    } else if (field.component === 'reference') {
-      const imageNode = find(currentNode, { type: 'image' });
-      properties[field.name] = imageNode.url;
-      collapseField(field.name, fields, imageNode, null, properties);
-      removeField(field, fields);
-    } else {
-      const linkNode = find(currentNode, { type: 'link' });
-      const headlineNode = find(currentNode, { type: 'heading' });
-      if (linkNode) {
-        properties[field.name] = linkNode.url;
-        collapseField(field.name, fields, linkNode, currentNode, properties);
-        removeField(field, fields);
-      } else if (headlineNode) {
-        properties[field.name] = encodeHTMLEntities(toString(headlineNode));
-        collapseField(field.name, fields, headlineNode, null, properties);
-        removeField(field, fields);
-      } else {
-        let value = encodeHTMLEntities(toString(currentNode));
-        if (field.component === 'multiselect' || field.component === 'aem-tag') {
-          value = `[${value.split(',')
-            .map((v) => v.trim())
-            .join(',')}]`;
-        }
-        if (value) {
-          properties[field.name] = value;
-        }
-      }
-    }
+    extraPropertiesForNode(field, currentNode, properties, fields);
   });
 
   return props;
@@ -256,35 +267,8 @@ function extractProperties(mdast, model, mode) {
       const groupNodes = nodes.slice(idx, idx + field.fields.length);
       const p = extractGroupProperties(mdast, field, groupNodes, properties);
       Object.assign(properties, p);
-    } else if (field.component === 'richtext') {
-      // obtain the html by taking the mdast and converting it to hast and then to html
-      const hast = toHast(valueNode);
-      properties[field.name] = encodeHtml(toHtml(hast));
-    } else if (field.component === 'reference') {
-      const imageNode = find(valueNode, { type: 'image' });
-      properties[field.name] = imageNode.url;
-      collapseField(field.name, fields, imageNode, null, properties);
-      removeField(field, fields);
     } else {
-      const linkNode = find(valueNode, { type: 'link' });
-      const headlineNode = find(valueNode, { type: 'heading' });
-      if (linkNode) {
-        properties[field.name] = linkNode.url;
-        collapseField(field.name, fields, linkNode, valueNode, properties);
-        removeField(field, fields);
-      } else if (headlineNode) {
-        properties[field.name] = encodeHTMLEntities(toString(headlineNode));
-        collapseField(field.name, fields, headlineNode, null, properties);
-        removeField(field, fields);
-      } else {
-        let value = encodeHTMLEntities(toString(valueNode));
-        if (field.component === 'multiselect' || field.component === 'aem-tag') {
-          value = `[${value.split(',').map((v) => v.trim()).join(',')}]`;
-        }
-        if (value) {
-          properties[field.name] = value;
-        }
-      }
+      extraPropertiesForNode(field, valueNode, properties, fields);
     }
   });
 

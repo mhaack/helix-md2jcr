@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,14 +14,23 @@ import assert from 'assert';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import md2jcr from '../src/md2jcr/index.js';
+import { loadBlockResources } from './test.utils.js';
 
-async function test(spec) {
+async function test(spec, models, definition, filters) {
   const md = await readFile(resolve(__testdir, 'fixtures', `${spec}.md`), 'utf-8');
   const actual = await md2jcr(md, {
     log: console,
+    models,
+    definition,
+    filters,
   });
   const expected = await readFile(resolve(__testdir, 'fixtures', `${spec}.xml`), 'utf-8');
   assert.strictEqual(actual.trim(), expected.trim());
+}
+
+async function testBlock(spec) {
+  const { models, definition, filters } = await loadBlockResources(spec);
+  await test(`blocks/${spec}`, models, definition, filters);
 }
 
 describe('md2jcr Tests', () => {
@@ -53,13 +62,17 @@ describe('md2jcr Tests', () => {
     await test('default-content-only');
   });
 
-  // it('converts a document with blocks', async () => {
-  //   await test('blocks');
-  // });
+  it('test key value blocks', async () => {
+    await testBlock('key-value');
+  });
 
-  // it('converts a document with blocks with colspans', async () => {
-  //   await test('blocks-with-colspan');
-  // });
+  it('default block test', async () => {
+    await testBlock('block');
+  });
+
+  it('test field grouping in a block', async () => {
+    await testBlock('grouping');
+  });
 
   // it('converts a document with multiple sections', async () => {
   //   await test('multiple-sections');

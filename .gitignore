@@ -6,4 +6,4 @@ dist
 .env
 .vscode
 *.env
-test/**.xml
+test/fixtures/**/*.xml

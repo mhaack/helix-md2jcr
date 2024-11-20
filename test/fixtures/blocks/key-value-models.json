@@ -36,11 +36,6 @@
         "component": "text",
         "name": "productText",
         "label": "Link Text"
-      },
-      {
-        "component": "text",
-        "name": "productType",
-        "label": "Link Type"
       }
     ]
   }

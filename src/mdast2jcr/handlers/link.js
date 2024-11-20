@@ -11,9 +11,17 @@
  */
 import { find } from 'unist-util-find';
 
+/** @typedef {import('mdast').Node} Node */
+
 const link = {
   supports: (node) => find(node, { type: 'link' }) !== undefined,
 
+  /**
+   * Returns the type of the link based on the node's parent.  Links can be wrapped
+   * in either strong or emphasis tags to denote primary and secondary links respectively.
+   * @param parentNode {Node} The parent node of the link
+   * @return {string} The type of the link (primary, secondary, or empty string)
+   */
   getType: (parentNode) => {
     if (find(parentNode, { type: 'emphasis' })) {
       return 'secondary';

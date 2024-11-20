@@ -12,15 +12,17 @@
 import { find } from 'unist-util-find';
 import { toString } from 'mdast-util-to-string';
 import Handlebars from 'handlebars';
+import { toHast } from 'mdast-util-to-hast';
+import { toHtml } from 'hast-util-to-html';
 import { getComponentByTitle, getModelId } from '../utils/Definitions.js';
-import { findModelById, getField, getMainFields, groupModelFields, } from '../utils/Models.js';
+import {
+  findModelById, getField, getMainFields, groupModelFields,
+} from '../utils/Models.js';
 import { findAll } from '../utils/mdast.js';
 import { getHandler } from '../handlers/index.js';
 import link from '../handlers/link.js';
 import image from '../handlers/image.js';
 import { encodeHtml, encodeHTMLEntities } from '../utils.js';
-import { toHast } from 'mdast-util-to-hast';
-import { toHtml } from 'hast-util-to-html';
 
 /**
  * @typedef {import('../index.js').FieldDef} Field
@@ -28,11 +30,6 @@ import { toHtml } from 'hast-util-to-html';
  * @typedef {import('../index.js').FiltersDef} Filters
  */
 
-/**
- * Remove the field from the fields array.
- * @param field
- * @param fields
- */
 function removeField(field, fields) {
   for (let i = 0; i < fields.length; i += 1) {
     if (fields[i].name === field.name) {
@@ -88,7 +85,7 @@ function getBlockDetails(mdast, definition) {
   return null;
 }
 
-function collapseField(id, fields, node, parentNode, properties = {}) {
+function collapseField(id, fields, node, parentNode, properties) {
   /* eslint-disable no-param-reassign */
   const suffixes = ['Alt', 'Type', 'MimeType', 'Text', 'Title'];
   suffixes.forEach((suffix) => {
@@ -99,8 +96,9 @@ function collapseField(id, fields, node, parentNode, properties = {}) {
         if (node.type === 'heading') {
           properties[field.name] = `h${node.depth}`;
         } else if (link.supports(node)) {
-          const type = link.getType(parentNode);
-          properties[field.name] = type;
+          // determine the type of the link by inspecting the parent node
+          // links can be wrapped in strong or em tags, or have no wrapping
+          properties[field.name] = link.getType(parentNode);
         }
       } else if (link.supports(node)) { // buttons / links
         if (suffix === 'Text') {
@@ -136,55 +134,48 @@ function extractGroupProperties(mdast, groupField, nodes, properties) {
     return props;
   }
 
+  const { fields } = groupField;
+
   const groupMainFields = getMainFields(groupField.fields);
-  let remainingFields = [...groupMainFields];
 
-  function getSpecificFieldByCondition(value, element, condition) {
-    const parsed = remainingFields.map((field, index) => ({ field, index }))
-      .filter(({ field }) => condition(field, groupField.fields))
-      .map(({ field, index }) => ({
-        field,
-        index,
-        properties: {
-          [field.name]: value,
-          ...collapseField(field.name, [...groupField.fields], element),
-        },
-      }));
+  groupMainFields.forEach((field, idx) => {
+    // if we have more nodes than fields, then we can't process them as they won't
+    // line up to the fields in the models
+    if (nodes.length <= idx) {
+      return;
+    }
 
-    const ranked = parsed.sort((a, b) => {
-      const aProps = Object.keys(a.properties).length;
-      const bProps = Object.keys(b.properties).length;
-      if (aProps === bProps) {
-        return a.index - b.index;
-      }
-      return bProps - aProps;
-    });
+    const currentNode = nodes[idx];
 
-    const [firstField] = ranked;
-    return firstField;
-  }
-
-  nodes.forEach((node) => {
-    const handler = getHandler(node);
-    if (handler) {
-      const handlerProps = handler.getProperties(node);
-
-      if (handler.name === 'link') {
-        const firstField = getSpecificFieldByCondition(handlerProps.href, node, link.condition);
-        if (firstField) {
-          properties[firstField.field.name] = Handlebars.Utils.escapeExpression(handlerProps.href);
-          collapseField(firstField.field.name, groupField.fields, node, properties);
-          remainingFields = remainingFields.slice(firstField.index + 1);
-          return;
+    if (field.component === 'richtext') {
+      // obtain the html by taking the mdast and converting it to hast and then to html
+      const hast = toHast(currentNode);
+      properties[field.name] = encodeHtml(toHtml(hast));
+    } else if (field.component === 'reference') {
+      const imageNode = find(currentNode, { type: 'image' });
+      properties[field.name] = imageNode.url;
+      collapseField(field.name, fields, imageNode, null, properties);
+      removeField(field, fields);
+    } else {
+      const linkNode = find(currentNode, { type: 'link' });
+      const headlineNode = find(currentNode, { type: 'heading' });
+      if (linkNode) {
+        properties[field.name] = linkNode.url;
+        collapseField(field.name, fields, linkNode, currentNode, properties);
+        removeField(field, fields);
+      } else if (headlineNode) {
+        properties[field.name] = encodeHTMLEntities(toString(headlineNode));
+        collapseField(field.name, fields, headlineNode, null, properties);
+        removeField(field, fields);
+      } else {
+        let value = encodeHTMLEntities(toString(currentNode));
+        if (field.component === 'multiselect' || field.component === 'aem-tag') {
+          value = `[${value.split(',')
+            .map((v) => v.trim())
+            .join(',')}]`;
         }
-      }
-
-      if (handler.name === 'image') {
-        const firstField = getSpecificFieldByCondition(handlerProps.src, node, image.condition);
-        if (firstField) {
-          properties[firstField.field.name] = Handlebars.Utils.escapeExpression(handlerProps.src);
-          collapseField(firstField.field.name, groupField.fields, node, properties);
-          remainingFields = remainingFields.slice(firstField.index + 1);
+        if (value) {
+          properties[field.name] = value;
         }
       }
     }
@@ -206,17 +197,6 @@ function extractProperties(mdast, model, mode) {
   // the first cells is the header row, so we skip it
   const [, ...nodes] = findAll(mdast, (node) => node.type === 'gtCell', true);
 
-  // if we are in keyValue mode, then we can throw away the key columns
-  // this will leave us with just the value columns
-  if (mode === 'keyValue') {
-    // eslint-disable-next-line no-plusplus
-    for (let i = nodes.length - 1; i >= 0; i--) {
-      if (i % 2 === 0) {
-        nodes.splice(i, 1);
-      }
-    }
-  }
-
   // go through the model's fields, and for fields that should be "grouped" together
   // combine them under a new type called "group", this is a way to identify fields that should
   // be grouped together
@@ -225,6 +205,43 @@ function extractProperties(mdast, model, mode) {
   // get all fields that are not field collapsed
   const mainFields = getMainFields(fields);
 
+  // the field keys come into play when the component is a key value pair
+  // the keys are used to order the fields in the order they appear in the markdown
+  const fieldKeys = [];
+
+  if (mode === 'keyValue') {
+    // from the nodes (md table), grab the keys in the order they show up
+    for (let i = 0; i < nodes.length; i += 2) {
+      const keyNode = nodes[i];
+      fieldKeys.push(toString(keyNode));
+    }
+
+    // now that we have the keys, throw away the key cells (nodes)
+    for (let i = nodes.length - 1; i >= 0; i -= 1) {
+      if (i % 2 === 0) {
+        nodes.splice(i, 1);
+      }
+    }
+  }
+
+  // the mainFields contains all the fields that are not collapsed and in the order of the model
+  // however the nodes are not in the same order as the fields, so we need to match them up
+  // go through the main fields and order them based on the fieldKeys
+  mainFields.sort((a, b) => {
+    const aIdx = fieldKeys.indexOf(a.name);
+    const bIdx = fieldKeys.indexOf(b.name);
+    if (aIdx === -1 && bIdx === -1) {
+      return 0;
+    }
+    if (aIdx === -1) {
+      return 1;
+    }
+    if (bIdx === -1) {
+      return -1;
+    }
+    return aIdx - bIdx;
+  });
+
   mainFields.forEach((field, idx) => {
     // if we have more nodes than fields, then we can't process them as they won't
     // line up to the fields in the models
@@ -232,34 +249,35 @@ function extractProperties(mdast, model, mode) {
       return;
     }
 
-    const currentNode = nodes[idx];
+    const valueNode = nodes[idx];
 
     // handle group fields that were generated by the groupModelFields function
     if (field.component === 'group') {
-      const p = extractGroupProperties(mdast, field, nodes, properties);
+      const groupNodes = nodes.slice(idx, idx + field.fields.length);
+      const p = extractGroupProperties(mdast, field, groupNodes, properties);
       Object.assign(properties, p);
     } else if (field.component === 'richtext') {
       // obtain the html by taking the mdast and converting it to hast and then to html
-      const hast = toHast(currentNode);
+      const hast = toHast(valueNode);
       properties[field.name] = encodeHtml(toHtml(hast));
     } else if (field.component === 'reference') {
-      const imageNode = find(currentNode, { type: 'image' });
+      const imageNode = find(valueNode, { type: 'image' });
       properties[field.name] = imageNode.url;
-      collapseField(field.name, fields, imageNode, properties);
+      collapseField(field.name, fields, imageNode, null, properties);
       removeField(field, fields);
     } else {
-      const linkNode = find(currentNode, { type: 'link' });
-      const headlineNode = find(currentNode, { type: 'heading' });
+      const linkNode = find(valueNode, { type: 'link' });
+      const headlineNode = find(valueNode, { type: 'heading' });
       if (linkNode) {
         properties[field.name] = linkNode.url;
-        collapseField(field.name, fields, linkNode, currentNode, properties);
+        collapseField(field.name, fields, linkNode, valueNode, properties);
         removeField(field, fields);
       } else if (headlineNode) {
         properties[field.name] = encodeHTMLEntities(toString(headlineNode));
-        collapseField(field.name, fields, headlineNode, properties);
+        collapseField(field.name, fields, headlineNode, null, properties);
         removeField(field, fields);
       } else {
-        let value = encodeHTMLEntities(toString(currentNode));
+        let value = encodeHTMLEntities(toString(valueNode));
         if (field.component === 'multiselect' || field.component === 'aem-tag') {
           value = `[${value.split(',').map((v) => v.trim()).join(',')}]`;
         }

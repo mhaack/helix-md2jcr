@@ -14,32 +14,32 @@
       },
       {
         "component": "text",
-        "name": "heading",
-        "label": "Row 3"
+        "name": "callout",
+        "label": "Call Out"
       },
       {
         "component": "text",
-        "name": "headingType",
-        "label": "Heading Type"
+        "name": "calloutType",
+        "label": "Callout Type"
       },
       {
         "component": "text",
-        "name": "link",
-        "label": "Link"
-      },
-      {
-        "component": "text",
-        "name": "linkTitle",
-        "label": "Link Title"
-      },
-      {
-        "component": "text",
-        "name": "linkText",
+        "name": "product",
         "label": "Link Text"
       },
       {
         "component": "text",
-        "name": "linkType",
+        "name": "productTitle",
+        "label": "Link Title"
+      },
+      {
+        "component": "text",
+        "name": "productText",
+        "label": "Link Text"
+      },
+      {
+        "component": "text",
+        "name": "productType",
         "label": "Link Type"
       }
     ]

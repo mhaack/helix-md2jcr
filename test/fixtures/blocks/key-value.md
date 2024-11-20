@@ -1,11 +1,12 @@
 +------------------------------------------------------------------------------+
 | Product Details                                                              |
 +=============+================================================================+
-| Row 1       | Row 1 value                                                    |
+| product     | [SG Lite](https://www.s.com "Check out SG Lite!")              |
 +-------------+----------------------------------------------------------------+
-| Row 2       | **Lorem ipsum** dolor sit amet                                 |
+| title       | S.G. Light                                                     |
 +-------------+----------------------------------------------------------------+
-| Row 3       | # Heading                                                      |
+| callout     | # New Price                                                    |
 +-------------+----------------------------------------------------------------+
-| Row 4       | [adobe.com](https://www.adobe.com "Navigate to adobe.com").    |
+| description | The **S.G. Lite** is an expandable saddle made to size with    |
+|             | room to account for late season winter clothing.               |
 +-------------+----------------------------------------------------------------+

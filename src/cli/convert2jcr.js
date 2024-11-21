@@ -58,8 +58,6 @@ async function convert(mdFile) {
 
   const md = await readFile(mdFile, 'utf-8');
 
-  console.log(`converting ${mdFile} -> ${path.relative(process.cwd(), fileJcrXML)}`);
-
   /** @type {Mdast2JCROptions} */
   const opts = {
     models: modelJson,

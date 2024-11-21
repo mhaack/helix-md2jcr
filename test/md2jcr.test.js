@@ -74,6 +74,10 @@ describe('md2jcr Tests', () => {
     await testBlock('grouping');
   });
 
+  it('test for container block', async () => {
+    await testBlock('container-block');
+  });
+
   // it('converts a document with multiple sections', async () => {
   //   await test('multiple-sections');
   // });

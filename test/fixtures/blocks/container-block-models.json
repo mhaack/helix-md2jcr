@@ -1,0 +1,41 @@
+[
+  {
+    "id": "cards",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title"
+     }
+    ]
+  },
+  {
+    "id": "card",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "value": "",
+        "label": "Text",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "price",
+        "label": "Text"
+      },
+      {
+        "component": "text",
+        "name": "priceType",
+        "label": "Text"
+      }
+    ]
+  }
+]

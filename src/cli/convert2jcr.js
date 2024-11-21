@@ -29,9 +29,7 @@ async function readJsonFile(filePath) {
       return JSON.parse(models);
     }
   } catch (error) {
-    if (error.code === 'ENOENT') {
-      console.warn(`No associated models file found: ${filePath}`);
-    }
+    console.error(`Error due to: ${error} for file ${filePath}`);
   }
   return {};
 }

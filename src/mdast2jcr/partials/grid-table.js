@@ -46,38 +46,35 @@ function removeField(field, fields) {
  * block, any classes, and an associated model id.
  */
 function getBlockDetails(mdast, definition) {
-  const row = find(mdast, { type: 'gtRow' });
-  if (row) {
-    const cell = find(row, { type: 'gtCell' });
-    if (cell) {
-      const textNode = find(cell, { type: 'text' });
-      // if the textNode.value looks like "block (foo, bar)", return an object that looks like
-      // { name: "block", classes: ["foo", "bar"] }
-      // const matches = textNode.value.match(/^([^(]+)\s*(\(([^)]+)\))?$/);
-      const regex = /^(?<blockName>[^(]+)\s*(\((?<classes>[^)]+)\))?$/;
-      const match = textNode.value.match(regex);
+  const header = find(mdast, { type: 'gtHeader' });
+  if (header) {
+    const textNode = find(header, { type: 'text' });
+    // if the textNode.value looks like "block (foo, bar)", return an object that looks like
+    // { name: "block", classes: ["foo", "bar"] }
+    const regex = /^(?<blockName>[^(]+)\s*(\((?<classes>[^)]+)\))?$/;
+    const match = toString(textNode).match(regex);
 
-      if (match) {
-        const block = {
-          name: match.groups.blockName.trim(),
-          classes: match.groups.classes ? match.groups.classes.split(',').map((c) => c.trim()) : [],
-        };
+    if (match) {
+      const block = {
+        name: match.groups.blockName.trim(),
+        classes: match.groups.classes ? match.groups.classes.split(',')
+          .map((c) => c.trim()) : [],
+      };
 
-        // try to locate the model name by inspecting the definition file
-        const modelId = getModelId(definition, block.name);
+      // try to locate the model name by inspecting the definition file
+      const modelId = getModelId(definition, block.name);
 
-        if (modelId) {
-          block.modelId = modelId;
-        } else {
-          if (block.name.toLowerCase() === 'metadata') {
-            block.modelId = 'page-metadata';
-          } else if (block.name.toLowerCase() === 'section metadata') {
-            block.modelId = 'section-metadata';
-          }
-          console.warn(`No model found for block ${block.name}`);
+      if (modelId) {
+        block.modelId = modelId;
+      } else {
+        if (block.name.toLowerCase() === 'metadata') {
+          block.modelId = 'page-metadata';
+        } else if (block.name.toLowerCase() === 'section metadata') {
+          block.modelId = 'section-metadata';
         }
-        return block;
+        console.warn(`No model found for block ${block.name}`);
       }
+      return block;
     }
   }
   return null;
@@ -206,7 +203,10 @@ function extractProperties(mdast, model, mode) {
   const properties = {};
 
   // the first cells is the header row, so we skip it
-  const [, ...nodes] = findAll(mdast, (node) => node.type === 'gtCell', true);
+  const nodes = findAll(mdast, (node) => node.type === 'gtCell', true);
+  if (mode !== 'blockItem') {
+    nodes.shift();
+  }
 
   // go through the model's fields, and for fields that should be "grouped" together
   // combine them under a new type called "group", this is a way to identify fields that should
@@ -278,7 +278,7 @@ function extractProperties(mdast, model, mode) {
 /**
  * Extract the properties that are belong to the block header.  Properties like
  * name, model id, and classes.
- * @param {object} models - the models object
+ * @param {Array<Model>} models - the models object
  * @param {Definition} definition - the definitions object
  * @param {object} mdast - the mdast tree
  * @return {{
@@ -309,6 +309,28 @@ function extractBlockHeaderProperties(models, definition, mdast) {
   return props;
 }
 
+function getBlockItems(mdast, models, model, definition, allowedComponents) {
+  // if there are no allowed components then we can't do anything
+  if (!allowedComponents.length) {
+    return undefined;
+  }
+
+  const [, ...rows] = findAll(mdast, (node) => node.type === 'gtRow', false);
+
+  const fields = groupModelFields(model);
+
+  const fieldsWithoutClasses = fields.filter((field) => field.name !== 'classes');
+  if (fieldsWithoutClasses.length > 0 && rows.length > 0) {
+    rows.shift();
+  }
+
+  return rows.map((row, i) => allowedComponents.map((childComponentId) => {
+    const childModel = findModelById(models, childComponentId);
+    const properties = extractProperties(row, childModel, 'blockItem');
+    return `<item_${i} sling:resourceType="core/franklin/components/block/v1/block/item" name="${childModel.id}" ${Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ')}></item_${i}>`;
+  }));
+}
+
 /**
  * The gridTablePartial function is a Handlebars partial that generates a block element.
  * @param {{models: Array<Model>,
@@ -328,28 +350,30 @@ function gridTablePartial(context) {
 
   const uniqueName = Handlebars.helpers.nameHelper.call(context, 'block');
 
-  const properties = {
+  const attributes = {
     'sling:resourceType': 'core/franklin/components/link/v1/block',
     'jcr:primaryType': 'nt:unstructured',
   };
 
-  const headerProps = extractBlockHeaderProperties(models, definition, mdast);
   // assign the header properties to the block properties
-  Object.assign(properties, headerProps);
+  const headerProps = extractBlockHeaderProperties(models, definition, mdast);
+  Object.assign(attributes, headerProps);
 
+  // now that we have the name of the block, we can find the associated model
   const model = findModelById(models, headerProps.model);
 
-  // at this point extract the properties from the markdown and use the model to map the properties
   const component = getComponentByTitle(definition, headerProps.name);
+
   const mode = component.keyValue ? 'keyValue' : 'simple';
   const props = extractProperties(mdast, model, mode);
-  Object.assign(properties, props);
+  Object.assign(attributes, props);
 
-  // do we need to do something here with the filters?
-  // filters...
+  const ac = filters.find((f) => f.id === component.filterId)?.components || [];
+  const blockItems = getBlockItems(mdast, models, model, definition, ac);
 
-  const attributesStr = Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ');
-  return `<block${uniqueName} ${attributesStr}></block>`;
+  const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
+
+  return `<block${uniqueName} ${attributesStr}>${blockItems.join('\n')}</block>`;
 }
 
 export default gridTablePartial;

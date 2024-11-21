@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
+  <jcr:content cq:template="/libs/core/franklin/templates/page" jcr:primaryType="cq:PageContent" sling:resourceType="core/franklin/components/page/v1/page" jcr:title="Template Title" jcr:description="Template Description">
+    <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
+      <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Cards" model="cards" title="Planes, Trains, and Automobiles">
+          <item_0 sling:resourceType="core/franklin/components/block/v1/block/item" name="card" image="http://localhost:3001/trucks.jpg" text="&lt;p>Trucks&lt;/p>" price="100,000" priceType="h2"></item_0>
+          <item_1 sling:resourceType="core/franklin/components/block/v1/block/item" name="card" image="http://localhost:3001/cars.jpg" text="&lt;p>Cars&lt;/p>" price="200,000" priceType="h2"></item_1>
+          <item_2 sling:resourceType="core/franklin/components/block/v1/block/item" name="card" image="http://localhost:3001/planes.jpg" text="&lt;p>Planes&lt;/p>" price="12,00,000" priceType="h2"></item_2>
+        </block>
+      </section>
+    </root>
+  </jcr:content>
+</jcr:root>

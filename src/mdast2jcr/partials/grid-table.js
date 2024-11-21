@@ -66,12 +66,10 @@ function getBlockDetails(mdast, definition) {
 
       if (modelId) {
         block.modelId = modelId;
-      } else {
-        if (block.name.toLowerCase() === 'metadata') {
-          block.modelId = 'page-metadata';
-        } else if (block.name.toLowerCase() === 'section metadata') {
-          block.modelId = 'section-metadata';
-        }
+      } else if (block.name.toLowerCase() === 'metadata') {
+        block.modelId = 'page-metadata';
+      } else if (block.name.toLowerCase() === 'section metadata') {
+        block.modelId = 'section-metadata';
       }
       return block;
     }

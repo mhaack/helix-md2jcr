@@ -11,6 +11,12 @@
         "component": "description",
         "name": "description",
         "label": "Description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Classes"
       }
     ]
   },

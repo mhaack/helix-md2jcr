@@ -210,8 +210,9 @@ function extractProperties(mdast, model, mode) {
 
   // go through the model's fields, and for fields that should be "grouped" together
   // combine them under a new type called "group", this is a way to identify fields that should
-  // be grouped together
-  const fields = groupModelFields(model);
+  // be grouped together.  We can eliminate the classes field from being processed again as it was
+  // handled in the header section.
+  const fields = groupModelFields(model).filter((f) => f.name !== 'classes');
 
   // get all fields that are not field collapsed
   const mainFields = getMainFields(fields);
@@ -301,9 +302,6 @@ function extractBlockHeaderProperties(models, definition, mdast) {
   if (blockDetails.classes.length > 0 && classesField) {
     props.classes = (classesField.component === 'multiselect')
       ? `[${blockDetails.classes.join(', ')}]` : blockDetails.classes.join(', ');
-
-    // remove the classes field from the model fields
-    removeField(classesField, model.fields);
   }
 
   return props;
@@ -320,12 +318,6 @@ function getBlockItems(mdast, models, model, definition, allowedComponents) {
   const rows = findAll(mdast, (node) => node.type === 'gtRow', false);
   const toShift = findAll(mdast, (node) => node.type === 'gtCell' && node.colSpan > 1, false);
   toShift.forEach(() => rows.shift());
-
-  // const fields = groupModelFields(model);
-  // const fieldsWithoutClasses = fields.filter((field) => field.name !== 'classes');
-  // if (fieldsWithoutClasses.length > 0 && rows.length > 0) {
-  //   rows.shift();
-  // }
 
   return rows.map((row, i) => allowedComponents.map((childComponentId) => {
     const childModel = findModelById(models, childComponentId);

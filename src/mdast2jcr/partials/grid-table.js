@@ -72,7 +72,6 @@ function getBlockDetails(mdast, definition) {
         } else if (block.name.toLowerCase() === 'section metadata') {
           block.modelId = 'section-metadata';
         }
-        console.warn(`No model found for block ${block.name}`);
       }
       return block;
     }

@@ -6,7 +6,12 @@
         "component": "text",
         "name": "title",
         "label": "Title"
-     }
+     },
+      {
+        "component": "description",
+        "name": "description",
+        "label": "Description"
+      }
     ]
   },
   {
@@ -16,8 +21,12 @@
         "component": "reference",
         "valueType": "string",
         "name": "image",
-        "label": "Image",
-        "multi": false
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "name": "imageAlt",
+        "label": "Image Alt"
       },
       {
         "component": "richtext",

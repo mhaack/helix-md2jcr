@@ -205,6 +205,8 @@ function extractProperties(mdast, model, mode) {
   // the first cells is the header row, so we skip it
   const nodes = findAll(mdast, (node) => node.type === 'gtCell', true);
   if (mode !== 'blockItem') {
+    // const toShift = findAll(mdast, (node) => node.type === 'gtCell' && node.colSpan > 1, false);
+    // toShift.forEach(() => nodes.shift());
     nodes.shift();
   }
 
@@ -315,14 +317,17 @@ function getBlockItems(mdast, models, model, definition, allowedComponents) {
     return undefined;
   }
 
-  const [, ...rows] = findAll(mdast, (node) => node.type === 'gtRow', false);
+  // first row is always the header, followed by N number of property rows
+  // we need to skip the rows that have a colSpan > 1
+  const rows = findAll(mdast, (node) => node.type === 'gtRow', false);
+  const toShift = findAll(mdast, (node) => node.type === 'gtCell' && node.colSpan > 1, false);
+  toShift.forEach(() => rows.shift());
 
-  const fields = groupModelFields(model);
-
-  const fieldsWithoutClasses = fields.filter((field) => field.name !== 'classes');
-  if (fieldsWithoutClasses.length > 0 && rows.length > 0) {
-    rows.shift();
-  }
+  // const fields = groupModelFields(model);
+  // const fieldsWithoutClasses = fields.filter((field) => field.name !== 'classes');
+  // if (fieldsWithoutClasses.length > 0 && rows.length > 0) {
+  //   rows.shift();
+  // }
 
   return rows.map((row, i) => allowedComponents.map((childComponentId) => {
     const childModel = findModelById(models, childComponentId);
@@ -369,11 +374,11 @@ function gridTablePartial(context) {
   Object.assign(attributes, props);
 
   const ac = filters.find((f) => f.id === component.filterId)?.components || [];
-  const blockItems = getBlockItems(mdast, models, model, definition, ac);
+  const blockItems = getBlockItems(mdast, models, model, definition, ac) || [];
 
   const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
 
-  return `<block${uniqueName} ${attributesStr}>${blockItems.join('\n')}</block>`;
+  return `<block${uniqueName} ${attributesStr}>${blockItems.length > 0 ? blockItems.join('\n') : ''}</block>`;
 }
 
 export default gridTablePartial;

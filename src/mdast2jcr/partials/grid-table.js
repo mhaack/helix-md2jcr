@@ -205,8 +205,6 @@ function extractProperties(mdast, model, mode) {
   // the first cells is the header row, so we skip it
   const nodes = findAll(mdast, (node) => node.type === 'gtCell', true);
   if (mode !== 'blockItem') {
-    // const toShift = findAll(mdast, (node) => node.type === 'gtCell' && node.colSpan > 1, false);
-    // toShift.forEach(() => nodes.shift());
     nodes.shift();
   }
 

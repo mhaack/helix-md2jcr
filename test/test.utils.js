@@ -13,9 +13,9 @@ import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 
 export async function loadBlockResources(spec) {
-  const modelFile = await readFile(resolve(__testdir, 'fixtures/blocks', `${spec}-models.json`), 'utf-8');
-  const definitionFile = await readFile(resolve(__testdir, 'fixtures/blocks', `${spec}-definitions.json`), 'utf-8');
-  const filtersFile = await readFile(resolve(__testdir, 'fixtures/blocks', `${spec}-filters.json`), 'utf-8');
+  const modelFile = await readFile(resolve(__testdir, `fixtures/blocks/${spec}`, `${spec}-models.json`), 'utf-8');
+  const definitionFile = await readFile(resolve(__testdir, `fixtures/blocks/${spec}`, `${spec}-definitions.json`), 'utf-8');
+  const filtersFile = await readFile(resolve(__testdir, `fixtures/blocks/${spec}`, `${spec}-filters.json`), 'utf-8');
 
   const modelJson = JSON.parse(modelFile);
   const definitionJson = JSON.parse(definitionFile);

@@ -30,7 +30,7 @@ async function test(spec, models, definition, filters) {
 
 async function testBlock(spec) {
   const { models, definition, filters } = await loadBlockResources(spec);
-  await test(`blocks/${spec}`, models, definition, filters);
+  await test(`blocks/${spec}/${spec}`, models, definition, filters);
 }
 
 describe('md2jcr Tests', () => {

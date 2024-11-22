@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import Handlebars from 'handlebars';
 
 /* eslint-disable no-param-reassign */
 
@@ -187,10 +188,5 @@ export function encodeHTMLEntities(str) {
 }
 
 export function encodeHtml(str) {
-  /* eslint-disable no-param-reassign */
-  str = str.replace(/<code>(.*?)<\/code>/gs, (match) => match.replace(/\n/g, '&#xa;'));
-  return str.replace(/&(?!amp;|lt;|gt;|quot;|apos;|#xa|#\d+;)/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/(\r\n|\n|\r)/gm, '')
-    .replace(/>[\s]*&lt;/g, '>&lt;');
+  return Handlebars.escapeExpression(str);
 }

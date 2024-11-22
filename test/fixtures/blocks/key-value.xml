@@ -3,7 +3,8 @@
   <jcr:content cq:template="/libs/core/franklin/templates/page" jcr:primaryType="cq:PageContent" sling:resourceType="core/franklin/components/page/v1/page" jcr:title="Template Title" jcr:description="Template Description">
     <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
       <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
-        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Product Details" model="key-values" product="https://www.s.com" productText="SG Lite" productTitle="Check out SG Lite!" title="S.G. Light" callout="New Price" calloutType="h1" description="&lt;p>The &lt;strong>S.G. Lite&lt;/strong> is an expandable saddle made to size withroom to account for late season winter clothing.&lt;/p>"></block>
+        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Product Details" model="key-values" product="https://www.s.com" productText="SG Lite" productTitle="Check out SG Lite!" title="S.G. Light" callout="New Price" calloutType="h1" description="&lt;p&gt;The &lt;strong&gt;S.G. Lite&lt;/strong&gt; is an expandable saddle made to size with
+                    room to account for late season winter clothing.&lt;/p&gt;"></block>
       </section>
     </root>
   </jcr:content>

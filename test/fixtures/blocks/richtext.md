@@ -7,23 +7,23 @@
 +-------------------------------------------------------------------------+
 | richtext                                                                |
 +=========================================================================+
-| Text with link [CTA 1](htttps://www.adobe.com) becomes richtext as well |
-| Text with link [CTA 2](htttps://www.google.com) as well                 |
+| Text with link [CTA 1](https://www.adobe.com) becomes richtext as well  |
+| Text with link [CTA 2](https://www.google.com) as well                  |
 +-------------------------------------------------------------------------+
 
 +--------------------------------------------------------------------------+
 | richtext                                                                 |
 +==========================================================================+
-| Text with link [CTA 1](htttps://www.adobe.com) becomes richtext as well\ |
-| Text with link [CTA 2](htttps://www.google.com) as well                  |
+| Text with link [CTA 1](https://www.adobe.com) becomes richtext as well\  |
+| Text with link [CTA 2](https://www.google.com) as well                   |
 +--------------------------------------------------------------------------+
 
 +-------------------------------------------------------------------------+
 | richtext                                                                |
 +=========================================================================+
-| Text with link [CTA 1](htttps://www.adobe.com) becomes richtext as well |
+| Text with link [CTA 1](https://www.adobe.com) becomes richtext as well  |
 |                                                                         |
-| Text with link [CTA 2](htttps://www.google.com)  as well                |
+| Text with link [CTA 2](https://www.google.com)  as well                 |
 +-------------------------------------------------------------------------+
 
 +---------------------------------------------------------------------------+
@@ -35,8 +35,8 @@
 +-------------------------------------------------------------------------+
 | richtext                                                                |
 +=========================================================================+
-| [CTA 1](htttps://www.adobe.com) becomes richtext as well                |
-| [CTA 2](htttps://www.google.com) as well                                |
+| [CTA 1](https://www.adobe.com) becomes richtext as well                 |
+| [CTA 2](https://www.google.com) as well                                 |
 +-------------------------------------------------------------------------+
 
 +-------------------------------------------------------------------------+

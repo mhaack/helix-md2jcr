@@ -20,4 +20,4 @@ Tests
 | og:url         | [Link](https://www.adobe.com)                          |
 +----------------+--------------------------------------------------------+
 
-[image]: https://localhost/pic.jpg
+[image]: https://localhost/metadata-extended.jpg

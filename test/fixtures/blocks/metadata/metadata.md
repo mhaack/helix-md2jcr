@@ -7,9 +7,5 @@
 |                | technology-driven world with the best instructional    |
 |                | practices and most useful learning experiences.        |
 +----------------+--------------------------------------------------------+
-| image          | ![][image]                                             |
-+----------------+--------------------------------------------------------+
 | og:url         | [Link](https://www.adobe.com)                          |
 +----------------+--------------------------------------------------------+
-
-[image]: https://localhost/pic.jpg

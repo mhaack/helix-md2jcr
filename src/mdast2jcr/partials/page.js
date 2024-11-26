@@ -32,7 +32,7 @@ function buildPageMetadata(table, models) {
       // if the field is an image then we need to dig into the row to find the image
       if (field.component === 'reference') {
         const { url } = image.getProperties(row);
-        metadata[field.name] = url;
+        metadata['xwalk:imageReference'] = url;
       } else if (link.supports(row)) {
         const { href } = link.getProperties(row);
         metadata[field.name] = href;
@@ -68,8 +68,15 @@ function page(options) {
     });
   }
 
-  const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
-  return `<jcr:content ${attributesStr}>${options.fn(this)}</jcr:content>`;
+  // pull the image reference out of the attributes
+  const { 'xwalk:imageReference': imageRef, ...properties } = attributes;
+  const attributesStr = Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ');
+
+  return `<jcr:content ${attributesStr}>
+    ${options.fn(this)}
+    ${imageRef ? `<image jcr:primaryType="nt:unstructured" fileReference="${imageRef}" />` : ''}
+    </jcr:content>
+  `;
 }
 
 export default page;

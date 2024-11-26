@@ -11,10 +11,6 @@
         "name": "description"
       },
       {
-        "component": "reference",
-        "name": "image"
-      },
-      {
         "component": "text",
         "name": "og:url"
       }

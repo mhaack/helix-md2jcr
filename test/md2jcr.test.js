@@ -78,6 +78,14 @@ describe('md2jcr Tests', () => {
     await testBlock('container-block');
   });
 
+  it('test for metadata block', async () => {
+    await testBlock('metadata');
+  });
+
+  it('test for expanded metadata block', async () => {
+    await testBlock('metadata-expanded');
+  });
+
   // it('converts a document with multiple sections', async () => {
   //   await test('multiple-sections');
   // });

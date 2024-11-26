@@ -17,9 +17,9 @@ const image = {
   getProperties: (node) => {
     const imageNode = find(node, { type: 'image' });
     return {
-      url: imageNode.url || '',
-      alt: imageNode.alt || '',
-      label: imageNode.label || '',
+      url: imageNode?.url || '',
+      alt: imageNode?.alt || '',
+      label: imageNode?.label || '',
     };
   },
 };

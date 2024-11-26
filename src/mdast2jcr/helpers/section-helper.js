@@ -12,10 +12,15 @@
 import Handlebars from 'handlebars';
 
 function sectionHelper(index, children, options) {
-  const section = { id: index, children: [] };
+  const attributes = {
+    'sling:resourceType': 'core/franklin/components/section/v1/section',
+    'jcr:primaryType': 'nt:unstructured',
+  };
+
   const uniqueName = Handlebars.helpers.nameHelper.call(this, 'section');
-  return `<section${uniqueName} sling:resourceType="core/franklin/components/section/v1/section" 
-            jcr:primaryType="nt:unstructured">\n${options.fn(this)}\n</section_${section.id}>\n`;
+
+  const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
+  return `<section${uniqueName} ${attributesStr}>${options.fn(this)}\n</section${uniqueName}>`;
 }
 
 export default sectionHelper;

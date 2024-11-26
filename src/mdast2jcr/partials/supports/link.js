@@ -32,8 +32,6 @@ const link = {
     return '';
   },
 
-  condition: (field, fields) => field.component === 'text' || fields.find((f) => f.name === `${field.name}Text`),
-
   getProperties: (child) => {
     const node = find(child, { type: 'link' });
     const text = find(node, { type: 'text' });

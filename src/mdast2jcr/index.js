@@ -31,6 +31,7 @@ import whichPartialHelper from './helpers/which-partial-helper.js';
 import gridTablePartial from './partials/grid-table.js';
 import blockQuotePartial from './partials/blockquote.js';
 import tablePartial from './partials/table.js';
+import page from './partials/page.js';
 
 /**
  * Converts a markdown AST to JCR XML.  This function is the main entry point
@@ -53,7 +54,7 @@ export default async function mdast2jcr(mdast, options = {}) {
   Handlebars.registerPartial('strong', stringPartial);
   Handlebars.registerPartial('emphasis', emphasisPartial);
   Handlebars.registerPartial('paragraphWrapper', paragraphWrapperPartial);
-  Handlebars.registerPartial('gridTable', gridTablePartial); // TODO
+  Handlebars.registerPartial('gridTable', gridTablePartial);
   Handlebars.registerPartial('blockquote', blockQuotePartial); // TODO
   Handlebars.registerPartial('table', tablePartial); // TODO
 
@@ -61,6 +62,7 @@ export default async function mdast2jcr(mdast, options = {}) {
   Handlebars.registerHelper('encode', encodeHelper);
   Handlebars.registerHelper('nameHelper', nameHelper);
   Handlebars.registerHelper('section', sectionHelper);
+  Handlebars.registerHelper('page', page);
 
   // reset the name helper counter
   nameReset();

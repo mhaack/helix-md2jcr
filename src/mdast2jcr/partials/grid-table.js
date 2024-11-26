@@ -19,8 +19,9 @@ import {
   findModelById, getField, getMainFields, groupModelFields,
 } from '../utils/Models.js';
 import { findAll } from '../utils/mdast.js';
-import link from '../handlers/link.js';
+import link from './supports/link.js';
 import { encodeHtml, encodeHTMLEntities } from '../utils.js';
+import image from './supports/image.js';
 
 /**
  * @typedef {import('../index.js').FieldDef} Field
@@ -101,7 +102,7 @@ function collapseField(id, fields, node, parentNode, properties) {
           // links can be wrapped in strong or em tags, or have no wrapping
           properties[field.name] = link.getType(parentNode);
         }
-      } else if (link.supports(node)) { // buttons / links
+      } else if (link.supports(node)) {
         if (suffix === 'Text') {
           properties[field.name] = encodeHTMLEntities(link.getProperties(node).text);
         } else {
@@ -134,7 +135,8 @@ function extraPropertiesForNode(field, currentNode, properties, fields) {
     properties[field.name] = encodeHtml(toHtml(hast));
   } else if (field.component === 'reference') {
     const imageNode = find(currentNode, { type: 'image' });
-    properties[field.name] = imageNode.url;
+    const { url } = image.getProperties(imageNode);
+    properties[field.name] = url;
     collapseField(field.name, fields, imageNode, null, properties);
     removeField(field, fields);
   } else {
@@ -354,18 +356,29 @@ function gridTablePartial(context) {
   // now that we have the name of the block, we can find the associated model
   const model = findModelById(models, headerProps.model);
 
-  const component = getComponentByTitle(definition, headerProps.name);
+  let component;
+  let mode = 'simple';
+  if (model.id === 'page-metadata') {
+    // we already processed page metadata in the page helper
+    return '';
+  } else {
+    component = getComponentByTitle(definition, headerProps.name);
+    mode = component.keyValue ? 'keyValue' : 'simple';
+  }
 
-  const mode = component.keyValue ? 'keyValue' : 'simple';
   const props = extractProperties(mdast, model, mode);
   Object.assign(attributes, props);
 
-  const ac = filters.find((f) => f.id === component.filterId)?.components || [];
-  const blockItems = getBlockItems(mdast, models, model, definition, ac) || [];
-
   const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
 
-  return `<block${uniqueName} ${attributesStr}>${blockItems.length > 0 ? blockItems.join('\n') : ''}</block>`;
+  let blockItems = [];
+  const blockName = model.id === 'page-metadata' ? 'page-meta' : 'block';
+  if (model.id !== 'page-metadata') {
+    const ac = filters.find((f) => f.id === component.filterId)?.components || [];
+    blockItems = getBlockItems(mdast, models, model, definition, ac) || [];
+  }
+
+  return `<${blockName}${uniqueName} ${attributesStr}>${blockItems.length > 0 ? blockItems.join('\n') : ''}</${blockName}>`;
 }
 
 export default gridTablePartial;

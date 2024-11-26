@@ -11,19 +11,17 @@
  */
 import { find } from 'unist-util-find';
 
-const text = {
-  supports: (node) => find(node, { type: 'text' }) !== undefined,
+const image = {
+  supports: (node) => find(node, { type: 'image' }) !== undefined,
 
-  condition: (field, fields) => field.component === 'text' || fields.find((f) => f.name === `${field.name}Text`),
-
-  getProperties: (child) => {
-    const node = find(child, { type: 'text' });
-
+  getProperties: (node) => {
+    const imageNode = find(node, { type: 'image' });
     return {
-      text: node.value,
+      url: imageNode.url || '',
+      alt: imageNode.alt || '',
+      label: imageNode.label || '',
     };
   },
-
 };
 
-export default text;
+export default image;

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import Handlebars from 'handlebars';
+import { toString } from 'mdast-util-to-string';
 
 /* eslint-disable no-param-reassign */
 
@@ -189,4 +190,14 @@ export function encodeHTMLEntities(str) {
 
 export function encodeHtml(str) {
   return Handlebars.escapeExpression(str);
+}
+
+/**
+ * Strip the new line characters from the given node.
+ * The node is first toString then all new lines are replaced with a space.
+ * @param node
+ * @return {string
+ */
+export function stripNewlines(node) {
+  return toString(node).replace(/\n/g, ' ');
 }

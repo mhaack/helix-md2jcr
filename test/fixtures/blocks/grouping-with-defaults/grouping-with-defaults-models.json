@@ -15,6 +15,18 @@
         "hidden": true
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "quote_title",
+        "label": "Title"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "quote_titleType",
+        "hidden": true
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "quote_text",

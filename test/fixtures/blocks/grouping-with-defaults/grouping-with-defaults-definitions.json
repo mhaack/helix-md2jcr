@@ -34,7 +34,8 @@
                 "template": {
                   "name": "Quote",
                   "model": "quote",
-                  "quote_eyebrowType": "h6"
+                  "quote_eyebrowType": "h6",
+                  "quote_titleType": "h2"
                 }
               }
             }

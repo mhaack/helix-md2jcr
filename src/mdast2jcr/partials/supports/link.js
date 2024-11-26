@@ -37,7 +37,7 @@ const link = {
     const text = find(node, { type: 'text' });
     return {
       href: node.url,
-      text: text.value,
+      text: text?.value,
     };
   },
 

@@ -7,6 +7,7 @@
         <block_1 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" classes="two" image="https://main--hubblehomes-com--aemsites.hlx.page/media_18bd35bfabf1ee9ca848b5f6ee811b9429fe8d39e.jpeg#width=1920&height=800" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe"></block_1>
         <block_2 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" classes="three" image="https://main--hubblehomes-com--aemsites.hlx.page/media_18bd35bfabf1ee9ca848b5f6ee811b9429fe8d39e.jpeg#width=1920&height=800" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe"></block_2>
         <block_3 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" image="https://main--hubblehomes-com--aemsites.hlx.page/media_18bd35bfabf1ee9ca848b5f6ee811b9429fe8d39e.jpeg#width=1920&height=800" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe"></block_3>
+        <block_4 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" image="https://main--hubblehomes-com--aemsites.hlx.page/media_18bd35bfabf1ee9ca848b5f6ee811b9429fe8d39e.jpeg#width=1920&height=800" imageAlt="Alt text goes here" link="http://www.adobe.com"></block_4>
       </section>
     </root>
   </jcr:content>

@@ -18,6 +18,13 @@ import link from './supports/link.js';
 import image from './supports/image.js';
 
 function buildPageMetadata(table, models) {
+  const aemMapping = {
+    description: 'jcr:description',
+    canonical: 'cq:canonicalUrl',
+    robots: 'cq:robotsTags',
+    title: 'jcr:title',
+  };
+
   const model = findModelById(models, 'page-metadata');
 
   const metadata = {};
@@ -41,7 +48,15 @@ function buildPageMetadata(table, models) {
       }
     }
   });
-  return metadata;
+
+  // now go through the metadata and map the fields to aem fields
+  const mappedMetadata = {};
+  Object.entries(metadata).forEach(([key, value]) => {
+    const mappedKey = aemMapping[key] || key;
+    mappedMetadata[mappedKey] = value;
+  });
+
+  return mappedMetadata;
 }
 
 function page(options) {

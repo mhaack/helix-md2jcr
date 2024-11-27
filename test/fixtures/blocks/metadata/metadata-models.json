@@ -13,6 +13,27 @@
       {
         "component": "text",
         "name": "og:url"
+      },
+      {
+        "component": "aem-tag",
+        "name": "cq:tags"
+      },
+      {
+        "component": "text",
+        "name": "non-multi"
+      },
+      {
+        "component": "checkbox-group",
+        "name": "checkbox"
+      },
+      {
+        "component": "multiselect",
+        "name": "multiselect"
+      },
+      {
+        "component": "text",
+        "name": "forced-multi",
+        "multi": true
       }
     ]
   }

@@ -24,7 +24,7 @@
       },
       {
         "component": "checkbox-group",
-        "name": "checkbox"
+        "name": "checkbox-group"
       },
       {
         "component": "multiselect",

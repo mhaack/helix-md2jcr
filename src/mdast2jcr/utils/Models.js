@@ -12,6 +12,7 @@
 
 /**
  * @typedef {import('../mdast2jcr/index.d.ts').ModelDef} Model
+ * @typedef {import('../mdast2jcr/index.d.ts').DefinitionDef} Definition
  * @typedef {import('../mdast2jcr/index.d.ts').CollapsedFields} CollapsedFields
  * @typedef {import('../mdast2jcr/index.d.ts').FieldDef} Field
  */
@@ -47,35 +48,6 @@ function getMainFields(fields) {
 }
 
 /**
- * Group fields by the first part of their name.  Fields with names that contain
- * an underscore will be grouped together.
- * @link https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/wysiwyg-authoring/content-modeling#element-grouping Experience League
- * @param {Model} model The model to group the fields for.
- * @return {Array<FieldDef>}
- */
-function groupModelFields(model) {
-  const fields = [];
-  model.fields.forEach((field) => {
-    if (field.name.includes('_')) {
-      const groupName = field.name.split('_')[0];
-      let groupObj = fields.find((item) => item.name === groupName);
-      if (!groupObj) {
-        groupObj = {
-          component: 'group',
-          name: groupName,
-          fields: [],
-        };
-        fields.push(groupObj);
-      }
-      groupObj.fields.push(field);
-    } else {
-      fields.push(field);
-    }
-  });
-  return fields;
-}
-
-/**
  * Given a model, return the field with the given name.
  * @param {Model} model The model.
  * @param {string} fieldName The name of the field to get.
@@ -88,6 +60,5 @@ function getField(model, fieldName) {
 export {
   getField,
   findModelById,
-  groupModelFields,
   getMainFields,
 };

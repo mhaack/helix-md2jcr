@@ -3,11 +3,10 @@
   <jcr:content cq:template="/libs/core/franklin/templates/page">
     <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
       <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
-        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" classes="one" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe"></block>
-        <block_1 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" classes="two" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe"></block_1>
-        <block_2 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" classes="three" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe"></block_2>
-        <block_3 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe"></block_3>
-        <block_4 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Hero" model="hero" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com"></block_4>
+        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" classes="one" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe" model="hero" name="Hero"></block>
+        <block_1 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" classes="two" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe" model="hero" name="Hero"></block_1>
+        <block_2 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com" linkText="Adobe" model="hero" name="Hero"></block_2>
+        <block_3 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" image="https://localhost/image.jpg" imageAlt="Alt text goes here" link="http://www.adobe.com" model="hero" name="Hero"></block_3>
       </section>
     </root>
   </jcr:content>

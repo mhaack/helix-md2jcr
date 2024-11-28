@@ -3,17 +3,11 @@
   <jcr:content cq:template="/libs/core/franklin/templates/page">
     <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
       <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
-        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Quote" model="quote" quote_eyebrow="Some Eyebrow" quote_eyebrowType="h6" quote_title="Title" quote_titleType="h2" quote_text="&lt;p&gt;Adobe Experience Cloud
-                    Join us in this ask me everything session ...&lt;/p&gt;" link="Title"></block>
-        <block_1 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Quote" model="quote" quote_eyebrow="Some Eyebrow" quote_eyebrowType="h6" quote_title="Title" quote_titleType="h2" quote_text="&lt;p&gt;Adobe Experience Cloud
-                    Join us in this ask me everything session ...&lt;/p&gt;" link="Title"></block_1>
-        <block_2 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Quote" model="quote" quote_eyebrow="Title" quote_eyebrowType="h2" quote_title="Adobe Experience Cloud
-                    Join us in this ask me everything session ..." quote_text="&lt;p&gt;&lt;a href&#x3D;&quot;http://www.adobe.com&quot;&gt;Adobe&lt;/a&gt;&lt;/p&gt;" link="Adobe Experience Cloud
-                    Join us in this ask me everything session ..."></block_2>
-        <block_3 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Quote" model="quote" quote_eyebrow="Some Eyebrow" quote_eyebrowType="h6" quote_title="Adobe Experience Cloud
-                    Join us in this ask me everything session ..." quote_text="&lt;p&gt;&lt;a href&#x3D;&quot;http://www.adobe.com&quot;&gt;Adobe&lt;/a&gt;&lt;/p&gt;" link="Adobe Experience Cloud
-                    Join us in this ask me everything session ..."></block_3>
-        <block_4 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" name="Quote" model="quote" quote_eyebrow="Some Eyebrow" quote_eyebrowType="h6" quote_title="Title" quote_titleType="h2" quote_text="&lt;p&gt;&lt;a href&#x3D;&quot;http://www.adobe.com&quot;&gt;Adobe&lt;/a&gt;&lt;/p&gt;" link="Title"></block_4>
+        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" link="http://www.adobe.com" linkText="Adobe" model="quote" name="Quote" quote_eyebrow="Eyebrow" quote_eyebrowType="h6" quote_text="&lt;p&gt;Adobe Experience Cloud Join us in this ask me everything session ...&lt;/p&gt;" quote_title="Title" quote_titleType="h2"></block>
+        <block_1 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" link="http://www.adobe.com" linkText="Adobe" model="quote" name="Quote" quote_eyebrow="Eyebrow" quote_eyebrowType="h6" quote_title="Adobe Experience Cloud Join us in this ask me everything session ..." quote_titleType="h2"></block_1>
+        <block_2 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" link="http://www.adobe.com" linkText="Adobe" model="quote" name="Quote" quote_eyebrow="Eyebrow" quote_eyebrowType="h6" quote_title="Title" quote_titleType="h2"></block_2>
+        <block_3 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" model="quote" name="Quote" quote_eyebrow="Eyebrow" quote_eyebrowType="h6" quote_text="&lt;p&gt;Second &lt;strong&gt;Row&lt;/strong&gt; must be defined.&lt;/p&gt;" quote_title="Title" quote_titleType="h2"></block_3>
+        <block_4 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" link="http://www.adobe.com" linkText="Adobe" model="quote" name="Quote" quote_eyebrowType="h6" quote_text="&lt;p&gt;Adobe Experience Cloud Join us in this ask me everything session ...&lt;/p&gt;" quote_title="Title" quote_titleType="h2"></block_4>
       </section>
     </root>
   </jcr:content>

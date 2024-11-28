@@ -13,7 +13,7 @@ import { find } from 'unist-util-find';
 import { toString } from 'mdast-util-to-string';
 import { findModelById, getField } from '../utils/Models.js';
 import { findAll } from '../utils/mdast.js';
-import { stripNewlines } from '../utils.js';
+import { encodeHTMLEntities, stripNewlines } from '../utils.js';
 import link from './supports/link.js';
 import image from './supports/image.js';
 
@@ -26,6 +26,11 @@ function buildPageMetadata(table, models) {
   };
 
   const model = findModelById(models, 'page-metadata');
+
+  const isMultiField = (fieldName) => {
+    const field = getField(model, fieldName.name);
+    return field && (field.component === 'multiselect' || field.component === 'aem-tag' || field.component === 'checkbox-group' || field.multi);
+  };
 
   const metadata = {};
   const [, ...rows] = findAll(table, (node) => node.type === 'gtRow', false);
@@ -44,7 +49,12 @@ function buildPageMetadata(table, models) {
         const { href } = link.getProperties(row);
         metadata[field.name] = href;
       } else {
-        metadata[field.name] = stripNewlines(cells[1]);
+        let value = stripNewlines(cells[1]);
+        if (isMultiField(field)) {
+          value = value.split(',').map((v) => encodeHTMLEntities(v.trim()));
+          value = value.length > 0 ? `[${value.join(',')}]` : '';
+        }
+        metadata[field.name] = value;
       }
     }
   });

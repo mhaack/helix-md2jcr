@@ -26,9 +26,7 @@ function getAllComponents(definitions) {
     .flat()
     .map((/** @type {ComponentDef} */ component) => new Component(
       component.title,
-      component.plugins?.xwalk?.page?.template?.model,
-      component.plugins?.xwalk?.page?.template?.filter,
-      component.plugins?.xwalk?.page?.template?.['key-value'],
+      component.plugins?.xwalk?.page?.template,
     ));
 }
 

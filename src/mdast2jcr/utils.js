@@ -193,11 +193,41 @@ export function encodeHtml(str) {
 }
 
 /**
- * Strip the new line characters from the given node.
- * The node is first toString then all new lines are replaced with a space.
- * @param node
- * @return {string
+ * Strip the new line characters from the given value.  If the value is of Node, toString
+ * is then performed and then a replacement occurs.  If the value is a string, a simple replace
+ * is performed.
+ * @param value the string or Node to strip newlines from.
+ * @return {string} the string with newlines replaced with spaces.
  */
-export function stripNewlines(node) {
-  return toString(node).replace(/\n/g, ' ');
+export function stripNewlines(value) {
+  if (!value) {
+    return '';
+  }
+
+  if (typeof value === 'string') {
+    return value.replace(/\n/g, ' ');
+  }
+  return toString(value).replace(/\n/g, ' ');
 }
+
+/**
+ * Sort properties by the following order: sling, jcr, other.
+ * @param {string} p1 - property 1
+ * @param {string} p2 - property 2
+ * @return {number} -1 if p1 is before p2, 1 if p2 is before p1, 0 if they are equal.
+ */
+export const sortJcrProperties = ([p1], [p2]) => {
+  if (p1.startsWith('sling:')) {
+    return -1;
+  }
+  if (p2.startsWith('sling:')) {
+    return 1;
+  }
+  if (p1.startsWith('jcr:')) {
+    return -1;
+  }
+  if (p2.startsWith('jcr:')) {
+    return 1;
+  }
+  return p1.localeCompare(p2);
+};

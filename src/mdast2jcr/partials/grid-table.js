@@ -16,27 +16,22 @@ import { toHast } from 'mdast-util-to-hast';
 import { toHtml } from 'hast-util-to-html';
 import { getComponentByTitle, getModelId } from '../utils/Definitions.js';
 import {
-  findModelById, getField, getMainFields, groupModelFields,
+  findModelById, getField,
 } from '../utils/Models.js';
 import { findAll } from '../utils/mdast.js';
 import link from './supports/link.js';
-import { encodeHtml, encodeHTMLEntities } from '../utils.js';
+import {
+  encodeHtml, encodeHTMLEntities, sortJcrProperties, stripNewlines,
+} from '../utils.js';
 import image from './supports/image.js';
+import FieldGrouping from '../models/FieldGrouping.js';
+import FieldResolver from '../models/FieldResolver.js';
 
 /**
  * @typedef {import('../index.js').FieldDef} Field
  * @typedef {import('../index.js').DefinitionDef} Definition
  * @typedef {import('../index.js').FiltersDef} Filters
  */
-
-function removeField(field, fields) {
-  for (let i = 0; i < fields.length; i += 1) {
-    if (fields[i].name === field.name) {
-      fields.splice(i, 1);
-      i -= 1;
-    }
-  }
-}
 
 /**
  * Locate the name of the Block and any classes that are associated with it.
@@ -78,6 +73,17 @@ function getBlockDetails(mdast, definition) {
   return null;
 }
 
+function deleteField(field, fields) {
+  if (fields) {
+    for (let i = 0; i < fields.length; i += 1) {
+      if (fields[i].name === field.name) {
+        fields.splice(i, 1);
+        i -= 1;
+      }
+    }
+  }
+}
+
 /**
  * Process the field and collapse the field into the properties object.
  * @param id {string} - the id of the field
@@ -85,10 +91,13 @@ function getBlockDetails(mdast, definition) {
  * @param node {Node} - the node to process
  * @param parentNode {Node} - the parent node if necessary to inspect the child's parent for details
  * @param properties {object} - the properties object
- * @return {*}
  */
 function collapseField(id, fields, node, parentNode, properties) {
   /* eslint-disable no-param-reassign */
+  if (!fields) {
+    return;
+  }
+
   const suffixes = ['Alt', 'Type', 'MimeType', 'Text', 'Title'];
   suffixes.forEach((suffix) => {
     const field = fields.find((f) => f.name === `${id}${suffix}`);
@@ -122,34 +131,36 @@ function collapseField(id, fields, node, parentNode, properties) {
       }
 
       // remove the field from the fields array as we have processed it
-      removeField(field, fields);
+      deleteField(field, fields);
     }
   });
-  return properties;
 }
 
-function extraPropertiesForNode(field, currentNode, properties, fields) {
+function extractPropertiesForNode(field, currentNode, properties) {
+  const fields = field.collapsed;
+
   if (field.component === 'richtext') {
     // obtain the html by taking the mdast and converting it to hast and then to html
     const hast = toHast(currentNode);
-    properties[field.name] = encodeHtml(toHtml(hast));
+    const encoded = encodeHtml(toHtml(hast));
+    properties[field.name] = stripNewlines(encoded);
   } else if (field.component === 'reference') {
     const imageNode = find(currentNode, { type: 'image' });
     const { url } = image.getProperties(imageNode);
     properties[field.name] = url;
     collapseField(field.name, fields, imageNode, null, properties);
-    removeField(field, fields);
+    deleteField(field, fields);
   } else {
     const linkNode = find(currentNode, { type: 'link' });
     const headlineNode = find(currentNode, { type: 'heading' });
     if (linkNode) {
       properties[field.name] = linkNode.url;
       collapseField(field.name, fields, linkNode, currentNode, properties);
-      removeField(field, fields);
+      deleteField(field, fields);
     } else if (headlineNode) {
       properties[field.name] = encodeHTMLEntities(toString(headlineNode));
       collapseField(field.name, fields, headlineNode, null, properties);
-      removeField(field, fields);
+      deleteField(field, fields);
     } else {
       let value = encodeHTMLEntities(toString(currentNode));
       if (field.component === 'multiselect' || field.component === 'aem-tag') {
@@ -158,37 +169,12 @@ function extraPropertiesForNode(field, currentNode, properties, fields) {
           .join(',')}]`;
       }
       if (value) {
-        properties[field.name] = value;
+        properties[field.name] = stripNewlines(value);
+        collapseField(field.name, fields, currentNode, null, properties);
+        deleteField(field, fields);
       }
     }
   }
-}
-
-// the field is a group and will have children
-function extractGroupProperties(mdast, groupField, nodes, properties) {
-  const props = { ...properties };
-
-  if (groupField.component !== 'group') {
-    return props;
-  }
-
-  const { fields } = groupField;
-
-  const groupMainFields = getMainFields(groupField.fields);
-
-  groupMainFields.forEach((field, idx) => {
-    // if we have more nodes than fields, then we can't process them as they won't
-    // line up to the fields in the models
-    if (nodes.length <= idx) {
-      return;
-    }
-
-    const currentNode = nodes[idx];
-
-    extraPropertiesForNode(field, currentNode, properties, fields);
-  });
-
-  return props;
 }
 
 /**
@@ -196,83 +182,33 @@ function extractGroupProperties(mdast, groupField, nodes, properties) {
  * @param {object} mdast - the mdast tree.
  * @param {Model} model - the model.
  * @param {string} mode - the mode either 'keyValue' or 'simple'.
+ * @param {Component} component - the component.
+ * @param properties
  * @return {{}} - the properties
  */
-function extractProperties(mdast, model, mode) {
-  const properties = {};
-
+function extractProperties(mdast, model, mode, component, properties) {
   // the first cells is the header row, so we skip it
-  const nodes = findAll(mdast, (node) => node.type === 'gtCell', true);
+  // const nodes = findAll(mdast, (node) => node.type === 'gtCell', true);
+  const rows = findAll(mdast, (node) => node.type === 'gtRow', false);
   if (mode !== 'blockItem') {
-    nodes.shift();
+    rows.shift();
   }
 
-  // go through the model's fields, and for fields that should be "grouped" together
-  // combine them under a new type called "group", this is a way to identify fields that should
-  // be grouped together.  We can eliminate the classes field from being processed again as it was
-  // handled in the header section.
-  const fields = groupModelFields(model).filter((f) => f.name !== 'classes');
+  const fieldGrouping = new FieldGrouping(model);
+  const fieldResolver = new FieldResolver(model, component);
 
-  // get all fields that are not field collapsed
-  const mainFields = getMainFields(fields);
-
-  // the field keys come into play when the component is a key value pair
-  // the keys are used to order the fields in the order they appear in the markdown
-  const fieldKeys = [];
-
-  if (mode === 'keyValue') {
-    // from the nodes (md table), grab the keys in the order they show up
-    for (let i = 0; i < nodes.length; i += 2) {
-      const keyNode = nodes[i];
-      fieldKeys.push(toString(keyNode));
-    }
-
-    // now that we have the keys, throw away the key cells (nodes)
-    for (let i = nodes.length - 1; i >= 0; i -= 1) {
-      if (i % 2 === 0) {
-        nodes.splice(i, 1);
-      }
-    }
+  if (fieldGrouping.groups().length !== rows.length) {
+    throw new Error('The number of field groups, does not match the number of rows.');
   }
 
-  // the mainFields contains all the fields that are not collapsed and in the order of the model
-  // however the nodes are not in the same order as the fields, so we need to match them up
-  // go through the main fields and order them based on the fieldKeys
-  mainFields.sort((a, b) => {
-    const aIdx = fieldKeys.indexOf(a.name);
-    const bIdx = fieldKeys.indexOf(b.name);
-    if (aIdx === -1 && bIdx === -1) {
-      return 0;
-    }
-    if (aIdx === -1) {
-      return 1;
-    }
-    if (bIdx === -1) {
-      return -1;
-    }
-    return aIdx - bIdx;
+  rows.forEach((row, i) => {
+    const fieldGroup = fieldGrouping.groups()[i];
+    const nodes = findAll(row, (node) => node.type === 'gtCell', true);
+    nodes.forEach((node) => {
+      const field = fieldResolver.resolve(node, fieldGroup);
+      extractPropertiesForNode(field, node, properties);
+    });
   });
-
-  mainFields.forEach((field, idx) => {
-    // if we have more nodes than fields, then we can't process them as they won't
-    // line up to the fields in the models
-    if (nodes.length <= idx) {
-      return;
-    }
-
-    const valueNode = nodes[idx];
-
-    // handle group fields that were generated by the groupModelFields function
-    if (field.component === 'group') {
-      const groupNodes = nodes.slice(idx, idx + field.fields.length);
-      const p = extractGroupProperties(mdast, field, groupNodes, properties);
-      Object.assign(properties, p);
-    } else {
-      extraPropertiesForNode(field, valueNode, properties, fields);
-    }
-  });
-
-  return properties;
 }
 
 /**
@@ -344,14 +280,8 @@ function gridTablePartial(context) {
 
   const uniqueName = Handlebars.helpers.nameHelper.call(context, 'block');
 
-  const attributes = {
-    'sling:resourceType': 'core/franklin/components/link/v1/block',
-    'jcr:primaryType': 'nt:unstructured',
-  };
-
   // assign the header properties to the block properties
   const headerProps = extractBlockHeaderProperties(models, definition, mdast);
-  Object.assign(attributes, headerProps);
 
   // now that we have the name of the block, we can find the associated model
   const model = findModelById(models, headerProps.model);
@@ -366,19 +296,25 @@ function gridTablePartial(context) {
     mode = component.keyValue ? 'keyValue' : 'simple';
   }
 
-  const props = extractProperties(mdast, model, mode);
-  Object.assign(attributes, props);
+  // Assign the template properties to the block properties
+  const properties = {
+    'sling:resourceType': 'core/franklin/components/link/v1/block',
+    'jcr:primaryType': 'nt:unstructured',
+    ...component.defaultFields,
+    ...headerProps,
+  };
 
-  const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
+  extractProperties(mdast, model, mode, component, properties);
 
-  let blockItems = [];
-  const blockName = model.id === 'page-metadata' ? 'page-meta' : 'block';
-  if (model.id !== 'page-metadata') {
-    const ac = filters.find((f) => f.id === component.filterId)?.components || [];
-    blockItems = getBlockItems(mdast, models, model, definition, ac) || [];
-  }
+  // sort all the properties so that they are in a consistent order
+  // helpful for debugging and xml readability
+  const sorted = Object.entries(properties).sort(sortJcrProperties);
+  const attributesStr = sorted.map(([k, v]) => `${k}="${v}"`).join(' ');
 
-  return `<${blockName}${uniqueName} ${attributesStr}>${blockItems.length > 0 ? blockItems.join('\n') : ''}</${blockName}>`;
+  const ac = filters.find((f) => f.id === component.filterId)?.components || [];
+  const blockItems = getBlockItems(mdast, models, model, definition, ac) || [];
+
+  return `<block${uniqueName} ${attributesStr}>${blockItems.length > 0 ? blockItems.join('\n') : ''}</block${uniqueName}>`;
 }
 
 export default gridTablePartial;

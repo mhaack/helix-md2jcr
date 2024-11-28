@@ -18,14 +18,13 @@ class Component {
   /**
    * Create a new Component.
    * @param {string} name
-   * @param {string} modelId
-   * @param {string} filterId
-   * @param {boolean} keyValue
+   * @param {object} template
    */
-  constructor(name, modelId, filterId, keyValue = false) {
-    this._filterId = filterId;
-    this._modelId = modelId;
-    this._keyValue = keyValue;
+  constructor(name, template) {
+    this._template = template;
+    this._filterId = template?.filter;
+    this._modelId = template?.model;
+    this._keyValue = template?.['key-value'];
     this._name = name;
   }
 
@@ -43,6 +42,17 @@ class Component {
 
   get name() {
     return this._name;
+  }
+
+  get defaultFields() {
+    // we will always inject the name and model ourselves, so return all other fields
+    const {
+      name,
+      model,
+      ...rest
+    } = this._template;
+
+    return rest;
   }
 }
 

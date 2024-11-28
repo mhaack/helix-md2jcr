@@ -4,6 +4,21 @@
     "fields": [
       {
         "component": "text",
+        "name": "product",
+        "label": "Link Text"
+      },
+      {
+        "component": "text",
+        "name": "productTitle",
+        "label": "Link Title"
+      },
+      {
+        "component": "text",
+        "name": "productText",
+        "label": "Link Text"
+      },
+      {
+        "component": "text",
         "name": "title",
         "label": "Title"
       },
@@ -21,21 +36,6 @@
         "component": "text",
         "name": "calloutType",
         "label": "Callout Type"
-      },
-      {
-        "component": "text",
-        "name": "product",
-        "label": "Link Text"
-      },
-      {
-        "component": "text",
-        "name": "productTitle",
-        "label": "Link Title"
-      },
-      {
-        "component": "text",
-        "name": "productText",
-        "label": "Link Text"
       }
     ]
   }

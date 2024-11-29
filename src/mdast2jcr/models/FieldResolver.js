@@ -21,11 +21,6 @@ class FieldResolver {
     this.component = component;
   }
 
-  _getTemplateField(name) {
-    const templateFields = Object.entries(this.component.defaultFields);
-    return templateFields.find(([key]) => key === name) || [];
-  }
-
   /**
    * Resolve the field.
    * @param {Node} node - the node

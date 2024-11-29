@@ -14,8 +14,8 @@ import { toString } from 'mdast-util-to-string';
 import { findModelById, getField } from '../utils/Models.js';
 import { findAll } from '../utils/mdast.js';
 import { encodeHTMLEntities, stripNewlines } from '../utils.js';
-import link from './supports/link.js';
-import image from './supports/image.js';
+import link from '../partials/supports/link.js';
+import image from '../partials/supports/image.js';
 
 function buildPageMetadata(table, models) {
   const aemMapping = {
@@ -69,7 +69,7 @@ function buildPageMetadata(table, models) {
   return mappedMetadata;
 }
 
-function page(options) {
+function pageHelper(options) {
   const {
     models,
     ...mdast
@@ -104,4 +104,4 @@ function page(options) {
   `;
 }
 
-export default page;
+export default pageHelper;

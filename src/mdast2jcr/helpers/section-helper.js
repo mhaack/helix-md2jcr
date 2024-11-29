@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 import Handlebars from 'handlebars';
+import { find } from 'unist-util-find';
+import { toString } from 'mdast-util-to-string';
+import { findAll } from '../utils/mdast.js';
 
 function sectionHelper(index, children, options) {
   const attributes = {
@@ -19,8 +22,32 @@ function sectionHelper(index, children, options) {
 
   const uniqueName = Handlebars.helpers.nameHelper.call(this, 'section');
 
+  // find the table that has a gtHeader that has a header value that contains 'section-metadata'
+  for (const child of children) {
+    if (child.type === 'gridTable') {
+      const cell = find(child, { type: 'gtCell' });
+      if (cell) {
+        const isMetadata = toString(cell).toLowerCase().replaceAll(' ', '-') === 'section-metadata';
+        if (isMetadata) {
+          const [, ...rows] = findAll(child, (n) => n.type === 'gtRow', false);
+          for (const row of rows) {
+            const cells = findAll(row, (n) => n.type === 'gtCell', true);
+            const key = toString(cells[0]);
+            const value = toString(cells[1]);
+            if (key === 'Style') {
+              attributes.classes = value;
+            } else {
+              attributes[`data-${key.toLowerCase().replaceAll(' ', '-')}`] = value;
+            }
+          }
+          break;
+        }
+      }
+    }
+  }
+
   const attributesStr = Object.entries(attributes).map(([k, v]) => `${k}="${v}"`).join(' ');
-  return `<section${uniqueName} ${attributesStr}>${options.fn(this)}\n</section${uniqueName}>`;
+  return `<section${uniqueName} ${attributesStr}>${options.fn(this)}</section${uniqueName}>`;
 }
 
 export default sectionHelper;

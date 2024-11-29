@@ -247,11 +247,14 @@ function extractBlockHeaderProperties(models, definition, mdast) {
 
   const model = findModelById(models, blockDetails.modelId);
 
-  const classesField = getField(model, 'classes');
+  // section metadata may not have a model
+  if (model) {
+    const classesField = getField(model, 'classes');
 
-  if (blockDetails.classes.length > 0 && classesField) {
-    props.classes = (classesField.component === 'multiselect')
-      ? `[${blockDetails.classes.join(', ')}]` : blockDetails.classes.join(', ');
+    if (blockDetails.classes.length > 0 && classesField) {
+      props.classes = (classesField.component === 'multiselect')
+        ? `[${blockDetails.classes.join(', ')}]` : blockDetails.classes.join(', ');
+    }
   }
 
   return props;
@@ -303,8 +306,11 @@ function gridTablePartial(context) {
 
   let component;
   let mode = 'simple';
-  if (model.id === 'page-metadata') {
-    // we already processed page metadata in the page helper
+
+  // both pageHelper metadata and section metadata are tables, but we don't want to process them
+  // here they have been processed by the page helper partial and section helper.
+  if (headerProps.model === 'section-metadata' || headerProps.model === 'page-metadata') {
+    // we already processed pageHelper metadata in the pageHelper helper
     return '';
   } else {
     component = getComponentByTitle(definition, headerProps.name);

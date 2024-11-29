@@ -281,4 +281,36 @@ describe('Field Group Tests', () => {
     const fieldGrouping = new FieldGrouping(model);
     assert.equal(fieldGrouping.groups().length, 2);
   });
+
+  it('verify a mix bag of grouping and collapsing', () => {
+    const model = {
+      id: 'key-values',
+      fields: [
+        // Group 1
+        {
+          component: 'text',
+          name: 'callout',
+          label: 'Call Out',
+        },
+        // below there are two fields associated with the above field
+        // collapsed field
+        {
+          component: 'text',
+          name: 'calloutType',
+          label: 'Callout Type',
+        },
+        // grouped field
+        {
+          component: 'text',
+          name: 'callout_text',
+          label: 'Callout Text',
+        },
+      ],
+    };
+
+    const fieldGrouping = new FieldGrouping(model);
+    assert.equal(fieldGrouping.groups().length, 1);
+    assert.equal(fieldGrouping.groups()[0].fields.length, 2);
+    assert.equal(fieldGrouping.groups()[0].fields[0].collapsed.length, 1);
+  });
 });

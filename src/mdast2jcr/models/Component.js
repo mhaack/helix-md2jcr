@@ -44,11 +44,14 @@ class Component {
     return this._name;
   }
 
+  /* eslint-disable no-unused-vars */
   get defaultFields() {
-    // we will always inject the name and model ourselves, so return all other fields
+    // remove the fields that are listed below, but keep the rest as default fields
+    // to be added to the block
     const {
       name,
       model,
+      'key-value': keyValue,
       ...rest
     } = this._template;
 

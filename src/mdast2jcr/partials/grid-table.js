@@ -177,6 +177,16 @@ function extractPropertiesForNode(field, currentNode, properties) {
   }
 }
 
+function extractKeyValueProperties(row, model, fieldResolver, fieldGroup, properties) {
+  const [, ...nodes] = findAll(row, (node) => node.type === 'gtCell', true);
+
+  for (let i = 0; i < nodes.length; i += 1) {
+    const node = nodes[i];
+    const field = fieldResolver.resolve(node, fieldGroup);
+    extractPropertiesForNode(field, node, properties);
+  }
+}
+
 /**
  * Given a row, a component, and a model, extract the properties from the row
  * @param {object} mdast - the mdast tree.
@@ -204,10 +214,15 @@ function extractProperties(mdast, model, mode, component, properties) {
   rows.forEach((row, i) => {
     const fieldGroup = fieldGrouping.groups()[i];
     const nodes = findAll(row, (node) => node.type === 'gtCell', true);
-    nodes.forEach((node) => {
-      const field = fieldResolver.resolve(node, fieldGroup);
-      extractPropertiesForNode(field, node, properties);
-    });
+
+    if (mode === 'keyValue') {
+      extractKeyValueProperties(row, model, fieldResolver, fieldGroup, properties);
+    } else {
+      nodes.forEach((node) => {
+        const field = fieldResolver.resolve(node, fieldGroup);
+        extractPropertiesForNode(field, node, properties);
+      });
+    }
   });
 }
 

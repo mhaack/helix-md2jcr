@@ -23,11 +23,6 @@
         "label": "Title"
       },
       {
-        "component": "richtext",
-        "name": "description",
-        "label": "Description"
-      },
-      {
         "component": "text",
         "name": "callout",
         "label": "Call Out"
@@ -36,6 +31,16 @@
         "component": "text",
         "name": "calloutType",
         "label": "Callout Type"
+      },
+      {
+        "component": "text",
+        "name": "callout_text",
+        "label": "Callout Text"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description"
       }
     ]
   }

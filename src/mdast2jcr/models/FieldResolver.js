@@ -35,6 +35,7 @@ class FieldResolver {
   resolve(node, fieldGroup) {
     let currentField = fieldGroup.fields.shift();
 
+    // if we have a heading node we can try to find the corresponding field in the template
     if (node.type === 'heading') {
       const headingType = `h${node.depth}`;
       const defaultTemplateFields = Object.entries(this.component.defaultFields);

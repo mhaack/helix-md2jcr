@@ -29,7 +29,8 @@ async function readJsonFile(filePath) {
       return JSON.parse(models);
     }
   } catch (error) {
-    console.error(`Error due to: ${error} for file ${filePath}`);
+    // ignore the fact that the file doesn't exist
+    // console.error(`Error due to: ${error} for file ${filePath}`);
   }
   return {};
 }

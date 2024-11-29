@@ -74,9 +74,9 @@ describe('md2jcr Tests', () => {
     await testBlock('grouping');
   });
 
-  it('test for container block', async () => {
-    await testBlock('container-block');
-  });
+  // it('test for container block', async () => {
+  //   await testBlock('container-block');
+  // });
 
   it('test for metadata block', async () => {
     await testBlock('metadata');

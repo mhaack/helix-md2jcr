@@ -286,7 +286,6 @@ function getBlockItems(mdast, modelHelper, definitions, allowedComponents) {
   const rows = findAll(mdast, (node) => node.type === 'gtRow' && node.children.length > 1, false);
 
   rows.forEach((row, i) => {
-    const properties = {};
     const cellText = toString(row.children[0]);
     const componentId = cellText.split(',').shift().trim();
     // check to see if we can use this component
@@ -294,7 +293,7 @@ function getBlockItems(mdast, modelHelper, definitions, allowedComponents) {
       const fieldGroup = modelHelper.getFieldGroup(componentId);
       if (fieldGroup) {
         const component = getComponentById(definitions, componentId);
-        Object.assign(properties, component.defaultFields);
+        const properties = { ...component.defaultFields };
         extractProperties(row, fieldGroup.model, 'blockItem', component, fieldGroup.fields, properties);
         items.push(`<item_${i} sling:resourceType="core/franklin/components/block/v1/block/item" name="${fieldGroup.model.id}" ${Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ')}></item_${i}>`);
       }

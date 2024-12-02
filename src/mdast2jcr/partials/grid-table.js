@@ -285,9 +285,10 @@ function getBlockItems(mdast, modelHelper, definitions, allowedComponents) {
   // get all rows after the header that are more than one cell wide
   const rows = findAll(mdast, (node) => node.type === 'gtRow' && node.children.length > 1, false);
 
-  rows.forEach((row, i) => {
+  rows.forEach((row) => {
     const cellText = toString(row.children[0]);
     const componentId = cellText.split(',').shift().trim();
+
     // check to see if we can use this component
     if (allowedComponents.includes(componentId)) {
       const fieldGroup = modelHelper.getFieldGroup(componentId);
@@ -295,8 +296,11 @@ function getBlockItems(mdast, modelHelper, definitions, allowedComponents) {
         const component = getComponentById(definitions, componentId);
         const properties = { ...component.defaultFields };
         extractProperties(row, fieldGroup.model, 'blockItem', component, fieldGroup.fields, properties);
-        items.push(`<item_${i} sling:resourceType="core/franklin/components/block/v1/block/item" name="${fieldGroup.model.id}" ${Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ')}></item_${i}>`);
+        items.push(`<item_${items.length} sling:resourceType="core/franklin/components/block/v1/block/item" name="${fieldGroup.model.id}" ${Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ')}></item_${items.length}>`);
       }
+    } else {
+      const msg = `The component '${componentId}' is not allowed in the block '${modelHelper.blockName}'. Modify the ${modelHelper.blockName} filters file to include the '${componentId}' component in the list of components.`;
+      console.error(msg);
     }
   });
 

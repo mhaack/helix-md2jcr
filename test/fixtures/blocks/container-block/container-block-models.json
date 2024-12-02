@@ -23,7 +23,7 @@
         "label": "Field 1"
       },
       {
-        "component": "text",
+        "component": "richtext",
         "name": "field2",
         "label": "Field 2"
       },

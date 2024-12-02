@@ -74,9 +74,9 @@ describe('md2jcr Tests', () => {
     await testBlock('grouping');
   });
 
-  // it('test for container block', async () => {
-  //   await testBlock('container-block');
-  // });
+  it('test for container block', async () => {
+    await testBlock('container-block');
+  });
 
   it('test for metadata block', async () => {
     await testBlock('metadata');
@@ -85,40 +85,4 @@ describe('md2jcr Tests', () => {
   it('test for expanded metadata block', async () => {
     await testBlock('metadata-expanded');
   });
-
-  // it('converts a document with multiple sections', async () => {
-  //   await test('multiple-sections');
-  // });
-
-  // it('converts a document with code block and tabs correctly', async () => {
-  //   await test('codeblock');
-  // });
-
-  // it('convert a document with icons', async () => {
-  //   await test('icons');
-  // });
-
-  // it('convert a document with blocks containing tables', async () => {
-  //   await test('block-with-table');
-  // });
-
-  // it('convert a document with underling, sub-, and superscript', async () => {
-  //   await test('sub-sup-u');
-  // });
-
-  // it('convert a document with headline and soft breaks correctly', async () => {
-  //   await test('breaks-in-headings');
-  // });
-
-  // it('convert a document with self-closing breaks correctly', async () => {
-  //   await test('self-closing-breaks');
-  // });
-
-  // it('convert a document with json-ld script tags correctly', async () => {
-  //   await test('json-ld');
-  // });
-
-  // it('convert a document with meta names and properties correctly', async () => {
-  //   await test('meta-tags');
-  // });
 });

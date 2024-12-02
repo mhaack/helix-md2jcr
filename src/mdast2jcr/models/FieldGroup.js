@@ -9,10 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-class FieldGrouping {
+class FieldGroup {
   /**
    * Constructor.
-   * @param {Model} model the model to use for the field grouping.
+   * @param {Model} model the model to use for the field group.
    */
   constructor(model) {
     this.model = model;
@@ -22,7 +22,7 @@ class FieldGrouping {
       this.model.fields = [];
     }
 
-    this.fieldGroups = [];
+    this.fields = [];
     this._groupFields();
   }
 
@@ -38,14 +38,14 @@ class FieldGrouping {
       .forEach((field) => {
         if (field.name.includes('_')) {
           const groupName = field.name.split('_')[0];
-          const groupObj = this.fieldGroups.find((item) => item.name === groupName) || {
+          const groupObj = this.fields.find((item) => item.name === groupName) || {
             isGrouped: true,
             name: groupName,
             fields: [],
           };
 
-          if (!this.fieldGroups.includes(groupObj)) {
-            this.fieldGroups.push(groupObj);
+          if (!this.fields.includes(groupObj)) {
+            this.fields.push(groupObj);
           }
 
           const suffix = suffixes.find((s) => field.name.endsWith(s));
@@ -61,7 +61,7 @@ class FieldGrouping {
         } else {
           const suffix = suffixes.find((s) => field.name.endsWith(s));
           const groupName = field.name.substring(0, field.name.indexOf(suffix));
-          let groupObj = this.fieldGroups.find((item) => item.name === groupName);
+          let groupObj = this.fields.find((item) => item.name === groupName);
 
           if (!groupObj) {
             groupObj = {
@@ -69,7 +69,7 @@ class FieldGrouping {
               name: field.name,
               fields: [field],
             };
-            this.fieldGroups.push(groupObj);
+            this.fields.push(groupObj);
           } else {
             // find the field in the group that has a name that starts with the field.name
             const collapsedField = groupObj.fields.find((item) => field.name.startsWith(item.name));
@@ -79,14 +79,6 @@ class FieldGrouping {
         }
       });
   }
-
-  /**
-   * Get the field groups.
-   * @return {*[{name: string, fields: []}]}
-   */
-  groups() {
-    return this.fieldGroups;
-  }
 }
 
-export default FieldGrouping;
+export default FieldGroup;

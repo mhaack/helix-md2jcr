@@ -18,14 +18,20 @@ class Component {
   /**
    * Create a new Component.
    * @param {string} name
+   * @param {string} id
    * @param {object} template
    */
-  constructor(name, template) {
+  constructor(name, id, template) {
     this._template = template;
     this._filterId = template?.filter;
     this._modelId = template?.model;
     this._keyValue = template?.['key-value'];
     this._name = name;
+    this._id = id;
+  }
+
+  get id() {
+    return this._id;
   }
 
   get filterId() {

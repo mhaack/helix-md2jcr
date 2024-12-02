@@ -61,20 +61,15 @@ export interface ComponentDef {
       page: {
         resourceType: ResourceType;
         template: {
-          name?: string;
-          model?: string;
-          columns?: string;
-          rows?: string;
-          filter?: string;
-          keyValue?: boolean;
-        };
+          [key: string]: string;
+        }
       };
     };
   };
 }
 
 export interface GroupDef {
-  name: string;
+  title: string;
   id: string;
   components: Array<ComponentDef>;
 }
@@ -86,10 +81,6 @@ export interface DefinitionDef {
 export interface Filter {
   id: string,
   components: Array<string>;
-}
-
-export interface FiltersDef {
-  filters: Array<Filter>;
 }
 
 /**
@@ -109,7 +100,7 @@ export interface Mdast2JCROptions {
   /**
    * Defines the filters.
    */
-  filters: FiltersDef;
+  filters: Array<Filter>;
 }
 
 /**

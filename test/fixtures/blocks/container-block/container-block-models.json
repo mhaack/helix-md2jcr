@@ -1,55 +1,81 @@
 [
   {
-    "id": "cards",
+    "id": "vehicles",
     "fields": [
       {
         "component": "text",
         "name": "title",
         "label": "Title"
-     },
-      {
-        "component": "description",
-        "name": "description",
-        "label": "Description"
       },
       {
         "component": "text",
-        "valueType": "string",
         "name": "classes",
         "label": "Classes"
       }
     ]
   },
   {
-    "id": "card",
+    "id": "plane",
     "fields": [
       {
-        "component": "reference",
-        "valueType": "string",
-        "name": "image",
-        "label": "Image"
+        "component": "text",
+        "name": "field1",
+        "label": "Field 1"
       },
       {
         "component": "text",
-        "name": "imageAlt",
-        "label": "Image Alt"
+        "name": "field2",
+        "label": "Field 2"
       },
       {
-        "component": "richtext",
-        "name": "text",
-        "value": "",
-        "label": "Text",
-        "valueType": "string"
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Classes"
+      }
+    ]
+  },
+  {
+    "id": "train",
+    "fields": [
+      {
+        "component": "text",
+        "name": "field1",
+        "label": "Field 1"
       },
       {
         "component": "text",
-        "name": "price",
-        "label": "Text"
+        "name": "field2",
+        "label": "Field 2"
       },
       {
         "component": "text",
-        "name": "priceType",
-        "label": "Type"
+        "name": "field3",
+        "label": "Field 3"
+      }
+    ]
+  },
+  {
+    "id": "car",
+    "fields": [
+      {
+        "component": "text",
+        "name": "field1",
+        "label": "Field 1"
+      },
+      {
+        "component": "text",
+        "name": "field2",
+        "label": "Field 3"
+      },
+      {
+        "component": "text",
+        "name": "field3",
+        "label": "Field 3"
+      },
+      {
+        "component": "text",
+        "name": "field4",
+        "label": "Field 4"
       }
     ]
   }

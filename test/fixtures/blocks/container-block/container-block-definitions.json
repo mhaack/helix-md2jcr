@@ -25,30 +25,60 @@
       "id": "blocks",
       "components": [
         {
-          "title": "Cards",
-          "id": "cards",
+          "title": "Vehicles",
+          "id": "vehicles",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/image/v1/block",
                 "template": {
-                  "model": "cards",
-                  "filter": "cards"
+                  "model": "vehicles",
+                  "filter": "vehicles"
                 }
               }
             }
           }
         },
         {
-          "title": "Card",
-          "id": "card",
+          "title": "Plane",
+          "id": "plane",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/image/v1/block/item",
                 "template": {
-                  "model": "card-item",
-                  "name": "Card Item"
+                  "model": "plane",
+                  "name": "Plane"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Train",
+          "id": "train",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/image/v1/block/item",
+                "template": {
+                  "model": "train",
+                  "name": "Train"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Car",
+          "id": "car",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/image/v1/block/item",
+                "template": {
+                  "model": "car",
+                  "name": "Car"
                 }
               }
             }

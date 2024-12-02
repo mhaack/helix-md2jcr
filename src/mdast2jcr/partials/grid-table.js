@@ -14,7 +14,7 @@ import { toString } from 'mdast-util-to-string';
 import Handlebars from 'handlebars';
 import { toHast } from 'mdast-util-to-hast';
 import { toHtml } from 'hast-util-to-html';
-import { getComponentByTitle, getModelId } from '../utils/Definitions.js';
+import { getComponentById, getComponentByTitle, getModelId } from '../utils/Definitions.js';
 import {
   findModelById, getField,
 } from '../utils/Models.js';
@@ -24,13 +24,12 @@ import {
   encodeHtml, encodeHTMLEntities, sortJcrProperties, stripNewlines,
 } from '../utils.js';
 import image from './supports/image.js';
-import FieldGrouping from '../models/FieldGrouping.js';
 import FieldResolver from '../models/FieldResolver.js';
+import ModelHelper from '../models/ModelHelper.js';
 
 /**
- * @typedef {import('../index.js').FieldDef} Field
- * @typedef {import('../index.js').DefinitionDef} Definition
- * @typedef {import('../index.js').FiltersDef} Filters
+ * @typedef {import('../index.d.ts').FieldDef} Field
+ * @typedef {import('../index.d.ts').DefinitionDef} Definition
  */
 
 /**
@@ -193,37 +192,69 @@ function extractKeyValueProperties(row, model, fieldResolver, fieldGroup, proper
  * @param {Model} model - the model.
  * @param {string} mode - the mode either 'keyValue' or 'simple'.
  * @param {Component} component - the component.
+ * @param fields - the field grouping object.
  * @param properties
  * @return {{}} - the properties
  */
-function extractProperties(mdast, model, mode, component, properties) {
+function extractProperties(mdast, model, mode, component, fields, properties) {
   // the first cells is the header row, so we skip it
   // const nodes = findAll(mdast, (node) => node.type === 'gtCell', true);
   const rows = findAll(mdast, (node) => node.type === 'gtRow', false);
   if (mode !== 'blockItem') {
     rows.shift();
+  } else {
+    const classesField = getField(model, 'classes');
+    // if our model defines a classes field then dig out the classes from the first cell
+    if (classesField) {
+      // if we are a block item we need to look at the first cell to see if it has any class
+      // properties by inspecting the text value for any commas
+      // if there is a comma that then becomes the classes property for the block item
+      const firstCell = rows[0].children[0];
+      const textValue = toString(firstCell);
+      const classes = textValue.split(',').map((c) => c.trim());
+
+      // discard the component name leaving only the block option names (classes names)
+      if (classes.length > 1) {
+        classes.shift();
+      }
+
+      // if we are left with any classes to add to the block item, then add them
+      if (classes.length > 0) {
+        properties.classes = (classesField.component === 'multiselect')
+          ? `[${classes.join(', ')}]` : classes.join(', ');
+      }
+    }
   }
 
-  const fieldGrouping = new FieldGrouping(model);
+  const nodesToUse = fields.map((group) => group.fields).flat();
   const fieldResolver = new FieldResolver(model, component);
 
-  if (fieldGrouping.groups().length !== rows.length) {
-    throw new Error('The number of field groups, does not match the number of rows.');
-  }
+  for (const [index, row] of rows.entries()) {
+    if (nodesToUse.length === index) {
+      break;
+    }
 
-  rows.forEach((row, i) => {
-    const fieldGroup = fieldGrouping.groups()[i];
-    const nodes = findAll(row, (node) => node.type === 'gtCell', true);
+    let fieldGroup = fields[index];
+
+    let nodes;
+    if (mode === 'blockItem') {
+      ([, ...nodes] = findAll(row, (node) => node.type === 'gtCell', true));
+    } else {
+      nodes = findAll(row, (node) => node.type === 'gtCell', true);
+    }
 
     if (mode === 'keyValue') {
       extractKeyValueProperties(row, model, fieldResolver, fieldGroup, properties);
     } else {
       nodes.forEach((node) => {
+        if (mode === 'blockItem') {
+          fieldGroup = fields.shift();
+        }
         const field = fieldResolver.resolve(node, fieldGroup);
         extractPropertiesForNode(field, node, properties);
       });
     }
-  });
+  }
 }
 
 /**
@@ -260,23 +291,32 @@ function extractBlockHeaderProperties(models, definition, mdast) {
   return props;
 }
 
-function getBlockItems(mdast, models, model, definition, allowedComponents) {
+function getBlockItems(mdast, modelHelper, definitions, allowedComponents) {
   // if there are no allowed components then we can't do anything
   if (!allowedComponents.length) {
     return undefined;
   }
 
-  // first row is always the header, followed by N number of property rows
-  // we need to skip the rows that have a colSpan > 1
-  const rows = findAll(mdast, (node) => node.type === 'gtRow', false);
-  const toShift = findAll(mdast, (node) => node.type === 'gtCell' && node.colSpan > 1, false);
-  toShift.forEach(() => rows.shift());
+  const items = [];
+  // get all rows after the header that are more than one cell wide
+  const rows = findAll(mdast, (node) => node.type === 'gtRow' && node.children.length > 1, false);
 
-  return rows.map((row, i) => allowedComponents.map((childComponentId) => {
-    const childModel = findModelById(models, childComponentId);
-    const properties = extractProperties(row, childModel, 'blockItem');
-    return `<item_${i} sling:resourceType="core/franklin/components/block/v1/block/item" name="${childModel.id}" ${Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ')}></item_${i}>`;
-  }));
+  rows.forEach((row, i) => {
+    const properties = {};
+    const cellText = toString(row.children[0]);
+    const componentId = cellText.split(',').shift().trim();
+    // check to see if we can use this component
+    if (allowedComponents.includes(componentId)) {
+      const fieldGroup = modelHelper.getFieldGroup(componentId);
+      if (fieldGroup) {
+        const component = getComponentById(definitions, componentId);
+        extractProperties(row, fieldGroup.model, 'blockItem', component, fieldGroup.fields, properties);
+        items.push(`<item_${i} sling:resourceType="core/franklin/components/block/v1/block/item" name="${fieldGroup.model.id}" ${Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ')}></item_${i}>`);
+      }
+    }
+  });
+
+  return items;
 }
 
 /**
@@ -299,21 +339,21 @@ function gridTablePartial(context) {
   const uniqueName = Handlebars.helpers.nameHelper.call(context, 'block');
 
   // assign the header properties to the block properties
-  const headerProps = extractBlockHeaderProperties(models, definition, mdast);
+  const blockHeaderProperties = extractBlockHeaderProperties(models, definition, mdast);
 
   // now that we have the name of the block, we can find the associated model
-  const model = findModelById(models, headerProps.model);
+  const model = findModelById(models, blockHeaderProperties.model);
 
   let component;
   let mode = 'simple';
 
   // both pageHelper metadata and section metadata are tables, but we don't want to process them
   // here they have been processed by the page helper partial and section helper.
-  if (headerProps.model === 'section-metadata' || headerProps.model === 'page-metadata') {
+  if (blockHeaderProperties.model === 'section-metadata' || blockHeaderProperties.model === 'page-metadata') {
     // we already processed pageHelper metadata in the pageHelper helper
     return '';
   } else {
-    component = getComponentByTitle(definition, headerProps.name);
+    component = getComponentByTitle(definition, blockHeaderProperties.name);
     mode = component.keyValue ? 'keyValue' : 'simple';
   }
 
@@ -322,18 +362,26 @@ function gridTablePartial(context) {
     'sling:resourceType': 'core/franklin/components/link/v1/block',
     'jcr:primaryType': 'nt:unstructured',
     ...component.defaultFields,
-    ...headerProps,
+    ...blockHeaderProperties,
   };
 
-  extractProperties(mdast, model, mode, component, properties);
+  const modelHelper = new ModelHelper(
+    blockHeaderProperties.name,
+    models,
+    definition,
+    filters,
+  );
+
+  const fieldGroup = modelHelper.getFieldGroup(model.id);
+  extractProperties(mdast, model, mode, component, fieldGroup.fields, properties);
 
   // sort all the properties so that they are in a consistent order
   // helpful for debugging and xml readability
   const sorted = Object.entries(properties).sort(sortJcrProperties);
   const attributesStr = sorted.map(([k, v]) => `${k}="${v}"`).join(' ');
 
-  const ac = filters.find((f) => f.id === component.filterId)?.components || [];
-  const blockItems = getBlockItems(mdast, models, model, definition, ac) || [];
+  const allowedComponents = filters.find((f) => f.id === component.filterId)?.components || [];
+  const blockItems = getBlockItems(mdast, modelHelper, definition, allowedComponents) || [];
 
   return `<block${uniqueName} ${attributesStr}>${blockItems.length > 0 ? blockItems.join('\n') : ''}</block${uniqueName}>`;
 }

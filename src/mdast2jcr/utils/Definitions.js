@@ -26,6 +26,7 @@ function getAllComponents(definitions) {
     .flat()
     .map((/** @type {ComponentDef} */ component) => new Component(
       component.title,
+      component.id,
       component.plugins?.xwalk?.page?.template,
     ));
 }
@@ -43,14 +44,26 @@ function getComponentByTitle(definitions, title) {
 }
 
 /**
+ * Get a component by its id.
+ * @param {DefinitionDef} definitions The Definitions object.
+ * @param {string} id The id of the component.
+ * @return {Component}
+ */
+function getComponentById(definitions, id) {
+  return getAllComponents(definitions).find(
+    (component) => component.id === id,
+  );
+}
+
+/**
  * Get the model id given a component name, or null if not found.
  * @param {DefinitionDef} definitions The Definitions object.
- * @param {string} name of the component.
+ * @param {string} title of the component.
  * @returns {string | null} The model id associated with the component or null
  * if not found.
  */
-function getModelId(definitions, name) {
-  const component = getComponentByTitle(definitions, name);
+function getModelId(definitions, title) {
+  const component = getComponentByTitle(definitions, title);
   if (component) {
     return component.modelId || null;
   }
@@ -61,4 +74,5 @@ export {
   getAllComponents,
   getComponentByTitle,
   getModelId,
+  getComponentById,
 };

@@ -12,9 +12,9 @@
     ]
   },
   {
-    "id": "cards",
+    "id": "vehicles",
     "components": [
-      "card"
+      "plane", "train", "car"
     ]
   }
 ]

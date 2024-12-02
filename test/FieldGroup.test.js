@@ -11,7 +11,7 @@
  */
 /* eslint-env mocha */
 import assert from 'assert';
-import FieldGrouping from '../src/mdast2jcr/models/FieldGrouping.js';
+import FieldGroup from '../src/mdast2jcr/models/FieldGroup.js';
 
 describe('Field Group Tests', () => {
   it('fields only', () => {
@@ -23,9 +23,9 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 2);
-    assert.equal(fieldGrouping.groups()[0].isGrouped, false);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 2);
+    assert.equal(fieldGrouping.fields[0].isGrouped, false);
   });
 
   it('single group test', () => {
@@ -37,9 +37,9 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 1);
-    assert.equal(fieldGrouping.groups()[0].isGrouped, true);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 1);
+    assert.equal(fieldGrouping.fields[0].isGrouped, true);
   });
 
   it('two group test', () => {
@@ -51,8 +51,8 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 2);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 2);
   });
 
   it('verify expected fields in group', () => {
@@ -64,9 +64,9 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 1);
-    assert.equal(fieldGrouping.groups()[0].fields.length, 2);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 1);
+    assert.equal(fieldGrouping.fields[0].fields.length, 2);
   });
 
   it('verify multiple groups contain expected fields', () => {
@@ -79,10 +79,10 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 2);
-    assert.equal(fieldGrouping.groups()[0].fields.length, 2);
-    assert.equal(fieldGrouping.groups()[1].fields.length, 1);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 2);
+    assert.equal(fieldGrouping.fields[0].fields.length, 2);
+    assert.equal(fieldGrouping.fields[1].fields.length, 1);
   });
 
   it('verify multiple groups with and without group fields', () => {
@@ -96,14 +96,14 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 3);
-    assert.equal(fieldGrouping.groups()[0].fields.length, 1);
-    assert.equal(fieldGrouping.groups()[0].isGrouped, false);
-    assert.equal(fieldGrouping.groups()[1].fields.length, 1);
-    assert.equal(fieldGrouping.groups()[1].isGrouped, true);
-    assert.equal(fieldGrouping.groups()[2].fields.length, 2);
-    assert.equal(fieldGrouping.groups()[2].isGrouped, true);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 3);
+    assert.equal(fieldGrouping.fields[0].fields.length, 1);
+    assert.equal(fieldGrouping.fields[0].isGrouped, false);
+    assert.equal(fieldGrouping.fields[1].fields.length, 1);
+    assert.equal(fieldGrouping.fields[1].isGrouped, true);
+    assert.equal(fieldGrouping.fields[2].fields.length, 2);
+    assert.equal(fieldGrouping.fields[2].isGrouped, true);
   });
 
   it('verify field object structure', () => {
@@ -115,13 +115,13 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups()[0].name, 'field1');
-    assert.equal(fieldGrouping.groups()[0].fields[0].name, 'field1');
-    assert.equal(fieldGrouping.groups()[0].fields.length, 1);
-    assert.equal(fieldGrouping.groups()[1].name, 'group2');
-    assert.equal(fieldGrouping.groups()[1].fields[0].name, 'group2_field1');
-    assert.equal(fieldGrouping.groups()[1].fields.length, 1);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields[0].name, 'field1');
+    assert.equal(fieldGrouping.fields[0].fields[0].name, 'field1');
+    assert.equal(fieldGrouping.fields[0].fields.length, 1);
+    assert.equal(fieldGrouping.fields[1].name, 'group2');
+    assert.equal(fieldGrouping.fields[1].fields[0].name, 'group2_field1');
+    assert.equal(fieldGrouping.fields[1].fields.length, 1);
   });
 
   it('verify that class field is not part of the group', () => {
@@ -133,8 +133,8 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 1);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 1);
   });
 
   it('verify model with empty fields does not crash', () => {
@@ -142,8 +142,8 @@ describe('Field Group Tests', () => {
       id: 'sample',
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 0);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 0);
   });
 
   it('one field with collapsing', () => {
@@ -155,10 +155,10 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 1);
-    assert.equal(fieldGrouping.groups()[0].isGrouped, false);
-    assert.equal(fieldGrouping.groups()[0].fields[0].collapsed.length, 1);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 1);
+    assert.equal(fieldGrouping.fields[0].isGrouped, false);
+    assert.equal(fieldGrouping.fields[0].fields[0].collapsed.length, 1);
   });
 
   it('real example', () => {
@@ -216,16 +216,16 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 2);
-    assert.equal(fieldGrouping.groups()[0].fields.length, 5);
-    assert.equal(fieldGrouping.groups()[0].fields[0].collapsed, undefined);
-    assert.equal(fieldGrouping.groups()[0].fields[1].collapsed.length, 1);
-    assert.equal(fieldGrouping.groups()[0].fields[2].collapsed, undefined);
-    assert.equal(fieldGrouping.groups()[0].fields[3].collapsed.length, 1);
-    assert.equal(fieldGrouping.groups()[0].fields[4].collapsed.length, 2);
-    assert.equal(fieldGrouping.groups()[1].fields.length, 1);
-    assert.equal(fieldGrouping.groups()[1].fields[0].collapsed.length, 2);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 2);
+    assert.equal(fieldGrouping.fields[0].fields.length, 5);
+    assert.equal(fieldGrouping.fields[0].fields[0].collapsed, undefined);
+    assert.equal(fieldGrouping.fields[0].fields[1].collapsed.length, 1);
+    assert.equal(fieldGrouping.fields[0].fields[2].collapsed, undefined);
+    assert.equal(fieldGrouping.fields[0].fields[3].collapsed.length, 1);
+    assert.equal(fieldGrouping.fields[0].fields[4].collapsed.length, 2);
+    assert.equal(fieldGrouping.fields[1].fields.length, 1);
+    assert.equal(fieldGrouping.fields[1].fields[0].collapsed.length, 2);
   });
 
   it('real example 2', () => {
@@ -278,8 +278,8 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 2);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 2);
   });
 
   it('verify a mix bag of grouping and collapsing', () => {
@@ -308,9 +308,9 @@ describe('Field Group Tests', () => {
       ],
     };
 
-    const fieldGrouping = new FieldGrouping(model);
-    assert.equal(fieldGrouping.groups().length, 1);
-    assert.equal(fieldGrouping.groups()[0].fields.length, 2);
-    assert.equal(fieldGrouping.groups()[0].fields[0].collapsed.length, 1);
+    const fieldGrouping = new FieldGroup(model);
+    assert.equal(fieldGrouping.fields.length, 1);
+    assert.equal(fieldGrouping.fields[0].fields.length, 2);
+    assert.equal(fieldGrouping.fields[0].fields[0].collapsed.length, 1);
   });
 });

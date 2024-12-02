@@ -55,8 +55,6 @@ class Component {
     // remove the fields that are listed below, but keep the rest as default fields
     // to be added to the block
     const {
-      name,
-      model,
       'key-value': keyValue,
       ...rest
     } = this._template;

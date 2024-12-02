@@ -179,7 +179,7 @@ function extractKeyValueProperties(row, model, fieldResolver, fieldGroup, proper
  * @return {{}} - the properties
  */
 function extractProperties(mdast, model, mode, component, fields, properties) {
-  const newFields = structuredClone(fields);
+  const fieldsCloned = structuredClone(fields);
 
   // the first cells is the header row, so we skip it
   // const nodes = findAll(mdast, (node) => node.type === 'gtCell', true);
@@ -210,7 +210,7 @@ function extractProperties(mdast, model, mode, component, fields, properties) {
     }
   }
 
-  const nodesToUse = newFields.map((group) => group.fields).flat();
+  const nodesToUse = fieldsCloned.map((group) => group.fields).flat();
   const fieldResolver = new FieldResolver(model, component);
 
   for (const [index, row] of rows.entries()) {
@@ -218,7 +218,7 @@ function extractProperties(mdast, model, mode, component, fields, properties) {
       break;
     }
 
-    let fieldGroup = structuredClone(newFields[index]);
+    let fieldGroup = fieldsCloned[index];
 
     let nodes;
     if (mode === 'blockItem') {
@@ -232,14 +232,10 @@ function extractProperties(mdast, model, mode, component, fields, properties) {
     } else {
       nodes.forEach((node) => {
         if (mode === 'blockItem') {
-          fieldGroup = structuredClone(newFields.shift());
+          fieldGroup = fieldsCloned.shift();
         }
         const field = fieldResolver.resolve(node, fieldGroup);
-
-        // clone the field object so that we can modify it
-        const fieldCopy = structuredClone(field);
-
-        extractPropertiesForNode(fieldCopy, node, properties);
+        extractPropertiesForNode(field, node, properties);
       });
     }
   }

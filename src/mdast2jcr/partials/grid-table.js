@@ -72,17 +72,6 @@ function getBlockDetails(mdast, definition) {
   return null;
 }
 
-function deleteField(field, fields) {
-  if (fields) {
-    for (let i = 0; i < fields.length; i += 1) {
-      if (fields[i].name === field.name) {
-        fields.splice(i, 1);
-        i -= 1;
-      }
-    }
-  }
-}
-
 /**
  * Process the field and collapse the field into the properties object.
  * @param id {string} - the id of the field
@@ -128,9 +117,6 @@ function collapseField(id, fields, node, parentNode, properties) {
       if (!properties[field.name]) {
         delete properties[field.name];
       }
-
-      // remove the field from the fields array as we have processed it
-      deleteField(field, fields);
     }
   });
 }
@@ -148,18 +134,15 @@ function extractPropertiesForNode(field, currentNode, properties) {
     const { url } = image.getProperties(imageNode);
     properties[field.name] = url;
     collapseField(field.name, fields, imageNode, null, properties);
-    deleteField(field, fields);
   } else {
     const linkNode = find(currentNode, { type: 'link' });
     const headlineNode = find(currentNode, { type: 'heading' });
     if (linkNode) {
       properties[field.name] = linkNode.url;
       collapseField(field.name, fields, linkNode, currentNode, properties);
-      deleteField(field, fields);
     } else if (headlineNode) {
       properties[field.name] = encodeHTMLEntities(toString(headlineNode));
       collapseField(field.name, fields, headlineNode, null, properties);
-      deleteField(field, fields);
     } else {
       let value = encodeHTMLEntities(toString(currentNode));
       if (field.component === 'multiselect' || field.component === 'aem-tag') {
@@ -170,7 +153,6 @@ function extractPropertiesForNode(field, currentNode, properties) {
       if (value) {
         properties[field.name] = stripNewlines(value);
         collapseField(field.name, fields, currentNode, null, properties);
-        deleteField(field, fields);
       }
     }
   }

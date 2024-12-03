@@ -18,20 +18,20 @@ import { readFile } from 'fs/promises';
 import xmlFormatter from 'xml-formatter';
 import { splitSection, unwrapImages as unwrapElements, wrapParagraphs } from './utils.js';
 import sanitizeHtml from './mdast-sanitize-html.js';
-import headingPartial from './partials/heading.js';
-import stringPartial from './partials/strong.js';
-import emphasisPartial from './partials/emphasis.js';
-import linkPartial from './partials/link.js';
-import paragraphWrapperPartial from './partials/paragraph.js';
-import nameHelper, { nameReset } from './helpers/name-helper.js';
-import sectionHelper from './helpers/section-helper.js';
-import imagePartial from './partials/image.js';
-import encodeHelper from './helpers/encode-helper.js';
-import whichPartialHelper from './helpers/which-partial-helper.js';
-import gridTablePartial from './partials/grid-table.js';
-import blockQuotePartial from './partials/blockquote.js';
-import tablePartial from './partials/table.js';
-import pageHelper from './helpers/page-helper.js';
+import headingPartial from './hb/partials/heading.js';
+import stringPartial from './hb/partials/strong.js';
+import emphasisPartial from './hb/partials/emphasis.js';
+import linkPartial from './hb/partials/link.js';
+import paragraphWrapperPartial from './hb/partials/paragraph.js';
+import nameHelper, { nameReset } from './hb/helpers/name-helper.js';
+import sectionHelper from './hb/helpers/section-helper.js';
+import imagePartial from './hb/partials/image.js';
+import encodeHelper from './hb/helpers/encode-helper.js';
+import whichPartialHelper from './hb/helpers/which-partial-helper.js';
+import gridTablePartial from './hb/partials/grid-table.js';
+import blockQuotePartial from './hb/partials/blockquote.js';
+import tablePartial from './hb/partials/table.js';
+import pageHelper from './hb/helpers/page-helper.js';
 
 /**
  * Converts a markdown AST to JCR XML.  This function is the main entry point

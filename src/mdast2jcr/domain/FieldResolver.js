@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+/**
+ * The FieldResolver class attempts to resolve a node to a model's field.
+ */
 class FieldResolver {
   /**
    * Constructor.

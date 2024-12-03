@@ -14,22 +14,22 @@ import { toString } from 'mdast-util-to-string';
 import Handlebars from 'handlebars';
 import { toHast } from 'mdast-util-to-hast';
 import { toHtml } from 'hast-util-to-html';
-import { getComponentById, getComponentByTitle, getModelId } from '../utils/Definitions.js';
+import { getComponentById, getComponentByTitle, getModelId } from '../../domain/Definitions.js';
 import {
   findModelById, getField,
-} from '../utils/Models.js';
-import { findAll } from '../utils/mdast.js';
+} from '../../domain/Models.js';
+import { findAll } from '../../utils/mdast.js';
 import link from './supports/link.js';
 import {
   encodeHtml, encodeHTMLEntities, sortJcrProperties, stripNewlines,
-} from '../utils.js';
+} from '../../utils.js';
 import image from './supports/image.js';
-import FieldResolver from '../models/FieldResolver.js';
-import ModelHelper from '../models/ModelHelper.js';
+import FieldResolver from '../../domain/FieldResolver.js';
+import ModelHelper from '../../domain/ModelHelper.js';
 
 /**
- * @typedef {import('../index.d.ts').FieldDef} Field
- * @typedef {import('../index.d.ts').DefinitionDef} Definition
+ * @typedef {import('../../index.d.ts').FieldDef} Field
+ * @typedef {import('../../index.d.ts').DefinitionDef} Definition
  */
 
 /**
@@ -125,10 +125,26 @@ function extractPropertiesForNode(field, currentNode, properties) {
   const fields = field.collapsed;
 
   if (field.component === 'richtext') {
-    // obtain the html by taking the mdast and converting it to hast and then to html
-    const hast = toHast(currentNode);
-    const encoded = encodeHtml(toHtml(hast));
-    properties[field.name] = stripNewlines(encoded);
+    let value;
+    const hasParagraphChildren = currentNode.children && find(currentNode, { type: 'paragraph' });
+
+    // if we're not a paragraph and we have paragraph children then we need to wrap the children
+    // in a paragraph
+    if (currentNode.type !== 'paragraph' && hasParagraphChildren) {
+      // combine all the children into a single string, but wrap them in a paragraph
+      value = currentNode.children.reduce((acc, node) => {
+        let str = toHtml(toHast(node));
+        if (node.type !== 'paragraph') {
+          str = `<p>${str}</p>`;
+        }
+        return acc + encodeHtml(str);
+      }, '');
+    } else {
+      value = encodeHtml(toHtml(toHast(currentNode)));
+    }
+
+    // if the node is a code block then don't strip out the newlines
+    properties[field.name] = currentNode.type !== 'code' ? stripNewlines(value) : value;
   } else if (field.component === 'reference') {
     const imageNode = find(currentNode, { type: 'image' });
     const { url } = image.getProperties(imageNode);
@@ -210,11 +226,11 @@ function extractProperties(mdast, model, mode, component, fields, properties) {
     }
   }
 
-  const nodesToUse = fieldsCloned.map((group) => group.fields).flat();
+  const modelFields = fieldsCloned.map((group) => group.fields).flat();
   const fieldResolver = new FieldResolver(model, component);
 
   for (const [index, row] of rows.entries()) {
-    if (nodesToUse.length === index) {
+    if (modelFields.length === index) {
       break;
     }
 
@@ -230,6 +246,19 @@ function extractProperties(mdast, model, mode, component, fields, properties) {
     if (mode === 'keyValue') {
       extractKeyValueProperties(row, model, fieldResolver, fieldGroup, properties);
     } else {
+      if (nodes.length > modelFields.length) {
+        nodes = [{
+          type: 'xxx',
+          children: nodes.flatMap((node) => {
+            const child = {
+              type: 'paragraph',
+              children: node.children,
+            };
+            return child;
+          }),
+        }];
+      }
+
       nodes.forEach((node) => {
         if (mode === 'blockItem') {
           fieldGroup = fieldsCloned.shift();

@@ -15,6 +15,7 @@ import {
   readdir, readFile, stat, writeFile,
 } from 'fs/promises';
 import path from 'path';
+import { decode } from 'entities';
 import { md2jcr } from '../index.js';
 
 /**
@@ -38,10 +39,11 @@ async function readJsonFile(filePath) {
 /**
  * Convert a markdown file to JCR XML.
  * @param mdFile {string} The path to the markdown file.
+ * @param decodeXML - if true a file with the decoded XML will be created.
  * @returns {Promise<void>} A promise that resolves when the conversion is
  * complete, or rejects if the file is not a markdown file.
  */
-async function convert(mdFile) {
+async function convert(mdFile, decodeXML = false) {
   if (!mdFile.endsWith('.md')) {
     return Promise.reject(new Error('File must be a markdown file'));
   }
@@ -49,6 +51,7 @@ async function convert(mdFile) {
   const dir = path.dirname(mdFile);
   const base = path.basename(mdFile, '.md');
   const fileJcrXML = path.resolve(dir, `${base}.xml`);
+  const decodedXML = path.resolve(dir, `${base}-decoded.xml`);
   const modelFile = path.resolve(dir, `${base}-models.json`);
   const definitionFile = path.resolve(dir, `${base}-definitions.json`);
   const filtersFile = path.resolve(dir, `${base}-filters.json`);
@@ -67,6 +70,10 @@ async function convert(mdFile) {
   };
 
   const xml = await md2jcr(md, opts);
+
+  if (decodeXML) {
+    writeFile(decodedXML, decode(xml));
+  }
 
   return writeFile(fileJcrXML, xml);
 }
@@ -89,7 +96,7 @@ async function run(inPath) {
   }
 
   for (const file of files) {
-    await convert(file);
+    await convert(file, process.argv.includes('-d'));
   }
 }
 

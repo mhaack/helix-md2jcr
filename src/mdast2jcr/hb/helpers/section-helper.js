@@ -12,7 +12,7 @@
 import Handlebars from 'handlebars';
 import { find } from 'unist-util-find';
 import { toString } from 'mdast-util-to-string';
-import { findAll } from '../utils/mdast.js';
+import { findAll } from '../../utils/mdast.js';
 
 function sectionHelper(index, children, options) {
   const attributes = {

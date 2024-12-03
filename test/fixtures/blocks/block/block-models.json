@@ -17,6 +17,13 @@
         "value": ""
       },
       {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description",
+        "value": ""
+      },
+      {
         "component": "text",
         "name": "link",
         "value": "",

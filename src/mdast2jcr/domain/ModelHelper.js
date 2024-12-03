@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { getComponentById, getComponentByTitle } from '../utils/Definitions.js';
+import { getComponentById, getComponentByTitle } from './Definitions.js';
 import FieldGroup from './FieldGroup.js';
 
 /**

@@ -11,7 +11,7 @@
  */
 /* eslint-env mocha */
 import assert from 'assert';
-import FieldGroup from '../src/mdast2jcr/models/FieldGroup.js';
+import FieldGroup from '../src/mdast2jcr/domain/FieldGroup.js';
 
 describe('Field Group Tests', () => {
   it('fields only', () => {

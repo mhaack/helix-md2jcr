@@ -11,9 +11,9 @@
  */
 import { find } from 'unist-util-find';
 import { toString } from 'mdast-util-to-string';
-import { findModelById, getField } from '../utils/Models.js';
-import { findAll } from '../utils/mdast.js';
-import { encodeHTMLEntities, stripNewlines } from '../utils.js';
+import { findModelById, getField } from '../../domain/Models.js';
+import { findAll } from '../../utils/mdast.js';
+import { encodeHTMLEntities, stripNewlines } from '../../utils.js';
 import link from '../partials/supports/link.js';
 import image from '../partials/supports/image.js';
 

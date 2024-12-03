@@ -14,7 +14,7 @@
  * @typedef {import('../mdast2jcr/index.d.ts').ComponentDef} ComponentDef
  */
 
-import Component from '../models/Component.js';
+import Component from './Component.js';
 
 /**
  * Get the components from the definitions object, (component-definitions.json).

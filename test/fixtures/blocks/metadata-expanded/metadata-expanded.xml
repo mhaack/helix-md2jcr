@@ -4,7 +4,7 @@
     <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
       <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
         <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" model="basic" name="Basic" title="Basic Text"></block>
-        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;div&gt;&lt;p&gt;Tests&lt;/p&gt;&lt;/div&gt;"/>
+        <text sling:resourceType="core/franklin/components/text/v1/text" jcr:primaryType="nt:unstructured" text="&lt;p&gt;Tests&lt;/p&gt;"/>
       </section>
     </root>
     <image jcr:primaryType="nt:unstructured" fileReference="https://localhost/metadata-extended.jpg"/>

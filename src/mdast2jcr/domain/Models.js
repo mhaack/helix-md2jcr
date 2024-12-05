@@ -28,26 +28,6 @@ function findModelById(models, modelId) {
 }
 
 /**
- * Given a list of fields, return all fields that are not part of a collapsed field.
- * @param {Array<Field>} fields The fields to get the main fields
- * @return {Array<Field>} The main fields.
- */
-function getMainFields(fields) {
-  // suffix must be sorted by length descending according to the logic below
-  const suffixes = ['MimeType', 'Title', 'Type', 'Text', 'Alt'];
-  const itemNames = fields.map((item) => item.name);
-
-  return fields.filter((item) => {
-    const itemNameWithoutSuffix = suffixes.reduce(
-      (name, suffix) => (name.endsWith(suffix) ? name.slice(0, -suffix.length) : name),
-      item.name,
-    );
-
-    return !itemNames.includes(itemNameWithoutSuffix) || itemNameWithoutSuffix === item.name;
-  });
-}
-
-/**
  * Given a model, return the field with the given name.
  * @param {Model} model The model.
  * @param {string} fieldName The name of the field to get.
@@ -60,5 +40,4 @@ function getField(model, fieldName) {
 export {
   getField,
   findModelById,
-  getMainFields,
 };

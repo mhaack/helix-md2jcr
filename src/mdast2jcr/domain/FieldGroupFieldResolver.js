@@ -13,14 +13,12 @@
 /**
  * The FieldResolver class attempts to resolve a node to a model's field.
  */
-class FieldResolver {
+class FieldGroupFieldResolver {
   /**
    * Constructor.
-   * @param {Model} model - the model
    * @param {Component} component - the component associated with the model.
    */
-  constructor(model, component) {
-    this.model = model;
+  constructor(component) {
     this.component = component;
   }
 
@@ -31,17 +29,20 @@ class FieldResolver {
    * collapsed: [{isGrouped: boolean, name: string, fields: []}]}} fieldGroup - the field group
    */
   resolve(node, fieldGroup) {
-    let currentField = fieldGroup.fields.shift();
+    const fieldGroupCloned = structuredClone(fieldGroup);
+    let currentField = fieldGroupCloned.fields.shift();
+    let found = false;
 
     // if we have a heading node we can try to find the corresponding field in the template
     if (node.type === 'heading') {
       const headingType = `h${node.depth}`;
       const defaultTemplateFields = Object.entries(this.component.defaultFields);
 
-      let found = false;
       for (const [templateFieldName, templateFieldValue] of defaultTemplateFields) {
         if (templateFieldValue === headingType) {
-          while (fieldGroup.fields.length > 0) {
+          // go through the field groups' fields attempting to find a collapsed field that
+          // matches the template field name
+          while (fieldGroupCloned.fields.length > 0) {
             if (currentField.collapsed) {
               const f = currentField.collapsed
                 .find((collapsedField) => collapsedField.name === templateFieldName);
@@ -51,15 +52,19 @@ class FieldResolver {
                 break;
               }
             }
-            currentField = fieldGroup.fields.shift();
+            currentField = fieldGroupCloned.fields.shift();
           }
           if (found) break;
         }
       }
     }
 
-    return currentField;
+    if (!found) {
+      return fieldGroup.fields.shift();
+    } else {
+      return currentField;
+    }
   }
 }
 
-export default FieldResolver;
+export default FieldGroupFieldResolver;

@@ -24,7 +24,7 @@ import {
   encodeHtml, encodeHTMLEntities, sortJcrProperties, stripNewlines,
 } from '../../utils.js';
 import image from './supports/image.js';
-import FieldResolver from '../../domain/FieldResolver.js';
+import FieldGroupFieldResolver from '../../domain/FieldGroupFieldResolver.js';
 import ModelHelper from '../../domain/ModelHelper.js';
 
 /**
@@ -227,7 +227,7 @@ function extractProperties(mdast, model, mode, component, fields, properties) {
   }
 
   const modelFields = fieldsCloned.map((group) => group.fields).flat();
-  const fieldResolver = new FieldResolver(model, component);
+  const fieldResolver = new FieldGroupFieldResolver(component);
 
   for (const [index, row] of rows.entries()) {
     if (modelFields.length === index) {
@@ -389,7 +389,7 @@ function gridTablePartial(context) {
     filters,
   );
 
-  const fieldGroup = modelHelper.getFieldGroup(model.id);
+  const fieldGroup = modelHelper.getModelFieldGroup(model.id);
   extractProperties(mdast, model, mode, component, fieldGroup.fields, properties);
 
   // sort all the properties so that they are in a consistent order

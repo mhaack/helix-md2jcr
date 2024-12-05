@@ -70,8 +70,15 @@ class ModelHelper {
     }
   }
 
-  getFieldGroup(modelId) {
+  /**
+   * Return the field group associated with the model id.
+   * @param modelId
+   * @return {FieldGroup|*|null}
+   */
+  getModelFieldGroup(modelId) {
     const result = this.groups.find((group) => group.modelId === modelId);
+
+    // no need to pass the fieldGroup just return the fields in the group
     return (result) ? result.fieldGroup : null;
   }
 }

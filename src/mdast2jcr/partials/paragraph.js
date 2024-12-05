@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 import Handlebars from 'handlebars';
+
 import { toHast } from 'mdast-util-to-hast';
 import { toHtml } from 'hast-util-to-html';
 
 function paragraph(context) {
-  const hast = toHast(context);
-  const html = toHtml(hast);
+  const html = context.children.map((child) => {
+    const hast = toHast(child);
+    return toHtml(hast);
+  }).join('');
+
   const uniqueName = Handlebars.helpers.nameHelper.call(context, 'text');
   return `<text${uniqueName} 
         sling:resourceType="core/franklin/components/text/v1/text" 

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "hero",
+    "fields": [
+      {
+        "component": "text",
+        "name": "hero_title",
+        "label": "Title"
+      },
+      {
+        "component": "text",
+        "name": "hero_titleType",
+        "label": "Type"
+      },
+      {
+        "component": "reference",
+        "name": "hero_image",
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "name": "hero_imageAlt",
+        "label": "Alt",
+        "value": ""
+      }
+    ]
+  }
+]

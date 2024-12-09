@@ -23,47 +23,70 @@ class FieldGroupFieldResolver {
   }
 
   /**
+   * Return the collapsed field name, that can support the node's heading depth.
+   * If the field does not have a collapsed field that matches the heading
+   * depth, then return undefined.
+   * @param node - the node
+   * @param field - the field
+   * @return {Field} a field that matches the node or undefined
+   */
+  getFieldSupportingHeading(node, field) {
+    const fieldsFromTemplate = Object.entries(this.component.defaultFields)
+      .filter(([name]) => name.endsWith('Type'))
+      .filter(([, value]) => value === `h${node.depth}`);
+
+    // go through all the collapsed fields of the field and see if we can find
+    // a field that matches the name of our best match from the template
+    return field.collapsed
+      .find((cf) => fieldsFromTemplate.find(([name]) => cf.name === name));
+  }
+
+  /**
    * Resolve the field.
    * @param {Node} node - the node
    * @param {{isGrouped: boolean, name: string, fields: [],
    * collapsed: [{isGrouped: boolean, name: string, fields: []}]}} fieldGroup - the field group
    */
+  // eslint-disable-next-line class-methods-use-this
   resolve(node, fieldGroup) {
-    const fieldGroupCloned = structuredClone(fieldGroup);
-    let currentField = fieldGroupCloned.fields.shift();
-    let found = false;
+    const { fields } = fieldGroup;
 
-    // if we have a heading node we can try to find the corresponding field in the template
-    if (node.type === 'heading') {
-      const headingType = `h${node.depth}`;
-      const defaultTemplateFields = Object.entries(this.component.defaultFields);
-
-      for (const [templateFieldName, templateFieldValue] of defaultTemplateFields) {
-        if (templateFieldValue === headingType) {
-          // go through the field groups' fields attempting to find a collapsed field that
-          // matches the template field name
-          while (fieldGroupCloned.fields.length > 0) {
-            if (currentField.collapsed) {
-              const f = currentField.collapsed
-                .find((collapsedField) => collapsedField.name === templateFieldName);
-
-              if (f) {
-                found = true;
-                break;
-              }
-            }
-            currentField = fieldGroupCloned.fields.shift();
-          }
-          if (found) break;
+    let foundField = fields.find((field) => {
+      if (node.type === 'heading' && field.collapsed?.find((c) => c.name.endsWith('Type'))) {
+        // try to find a field that matches the heading depth, if we have one
+        // then the field supports it so we can return true
+        if (!this.getFieldSupportingHeading(node, field)) {
+          // if the field does not match the heading type then we return false
+          return false;
         }
+        // if we have a match then we remove all fields up to and including the match
+        fields.splice(0, fields.indexOf(field) + 1);
+        return true;
+      } else if (node.type === 'paragraph') {
+        // is the first child an image?
+        if (node.children[0]?.type === 'image' && field.component === 'reference') {
+          // remove the field from fields
+          fields.splice(fields.indexOf(field), 1);
+          return true;
+        }
+
+        // do we have a link
+        if (node.children[0]?.type === 'link' && field.component === 'text') {
+          fields.splice(fields.indexOf(field), 1);
+          return true;
+        }
+        return false;
       }
+
+      return false;
+    });
+
+    if (!foundField) {
+      [foundField] = fields.splice(0, 1);
     }
 
-    if (!found) {
-      return fieldGroup.fields.shift();
-    } else {
-      return currentField;
-    }
+    // if foundField is undefined then return the next field from the fields.
+    return foundField;
   }
 }
 

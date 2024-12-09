@@ -1,0 +1,20 @@
+[
+  {
+    "id": "main",
+    "components": [
+      "section"
+    ]
+  },
+  {
+    "id": "section",
+    "components": [
+      "cards"
+    ]
+  },
+  {
+    "id": "vehicles",
+    "components": [
+      "plane", "train", "car"
+    ]
+  }
+]

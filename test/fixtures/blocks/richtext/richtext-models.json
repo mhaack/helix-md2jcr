@@ -1,0 +1,12 @@
+[
+  {
+    "id": "richtext",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "myText",
+        "valueType": "string"
+      }
+    ]
+  }
+]

@@ -15,32 +15,88 @@ import {
   readdir, readFile, stat, writeFile,
 } from 'fs/promises';
 import path from 'path';
+import { decode } from 'entities';
 import { md2jcr } from '../index.js';
 
-async function run(filePath) {
-  // eslint-disable-next-line no-param-reassign
-  filePath = path.resolve(process.cwd(), filePath);
+/**
+ * Read a JSON file. If the file does not exist, return an empty object.
+ * @param {string} filePath The path to the JSON file.
+ * @returns {Promise<{}|any>} A promise that resolves to the JSON object in the file,
+ */
+async function readJsonFile(filePath) {
+  try {
+    if ((await stat(filePath)).isFile()) {
+      const models = await readFile(filePath, 'utf-8');
+      return JSON.parse(models);
+    }
+  } catch (error) {
+    // ignore the fact that the file doesn't exist
+    // console.error(`Error due to: ${error} for file ${filePath}`);
+  }
+  return {};
+}
+
+/**
+ * Convert a markdown file to JCR XML.
+ * @param mdFile {string} The path to the markdown file.
+ * @param decodeXML - if true a file with the decoded XML will be created.
+ * @returns {Promise<void>} A promise that resolves when the conversion is
+ * complete, or rejects if the file is not a markdown file.
+ */
+async function convert(mdFile, decodeXML = false) {
+  if (!mdFile.endsWith('.md')) {
+    return Promise.reject(new Error('File must be a markdown file'));
+  }
+
+  const dir = path.dirname(mdFile);
+  const base = path.basename(mdFile, '.md');
+  const fileJcrXML = path.resolve(dir, `${base}.xml`);
+  const decodedXML = path.resolve(dir, `${base}-decoded.xml`);
+  const modelFile = path.resolve(dir, `${base}-models.json`);
+  const definitionFile = path.resolve(dir, `${base}-definitions.json`);
+  const filtersFile = path.resolve(dir, `${base}-filters.json`);
+
+  const modelJson = await readJsonFile(modelFile);
+  const definitionJson = await readJsonFile(definitionFile);
+  const filtersJson = await readJsonFile(filtersFile);
+
+  const md = await readFile(mdFile, 'utf-8');
+
+  /** @type {Mdast2JCROptions} */
+  const opts = {
+    models: modelJson,
+    definition: definitionJson,
+    filters: filtersJson,
+  };
+
+  const xml = await md2jcr(md, opts);
+
+  if (decodeXML) {
+    writeFile(decodedXML, decode(xml));
+  }
+
+  return writeFile(fileJcrXML, xml);
+}
+
+/**
+ * Entry point to convert a markdown file to JCR XML.
+ * @param inPath {string} The path to the markdown file or directory containing
+ * markdown files.
+ * @returns {Promise<void>} A promise that resolves when the conversion is
+ * complete.
+ */
+async function run(inPath) {
+  const dirOrFilePath = path.resolve(process.cwd(), inPath);
+
   const files = [];
-  if ((await stat(filePath)).isDirectory()) {
-    files.push(...await readdir(filePath));
+  if ((await stat(dirOrFilePath)).isDirectory()) {
+    files.push(...await readdir(dirOrFilePath));
   } else {
-    files.push(filePath);
+    files.push(dirOrFilePath);
   }
 
   for (const file of files) {
-    if (!file.endsWith('.md')) {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-    const dir = path.dirname(file);
-    const base = path.basename(file, '.md');
-    const fileJcrXML = path.resolve(dir, `${base}.xml`);
-
-    console.log(`converting ${file} -> ${path.relative(process.cwd(), fileJcrXML)}`);
-
-    const md = await readFile(file);
-    const buffer = await md2jcr(md);
-    await writeFile(fileJcrXML, buffer);
+    await convert(file, process.argv.includes('-d'));
   }
 }
 

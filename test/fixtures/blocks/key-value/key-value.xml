@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
+  <jcr:content cq:template="/libs/core/franklin/templates/page">
+    <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
+      <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
+        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" callout="New Price" callout_text="New price discounted!" calloutType="h2" description="&lt;p&gt;The &lt;strong&gt;S.G. Lite&lt;/strong&gt; is an expandable saddle made to size with room to account for late season winter clothing.&lt;/p&gt;" model="key-values" name="Product Details" product="https://www.s.com" productText="SG Lite" productTitle="Check out SG Lite!" title="S.G. Light"></block>
+        <block_1 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" description="&lt;p&gt;The &lt;strong&gt;S.G. Lite&lt;/strong&gt; is an expandable saddle made to size with room to account for late season winter clothing.&lt;/p&gt;" model="key-values" name="Product Details" product="https://www.s.com" productText="SG Lite" title="S.G. Light"></block_1>
+        <block_2 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" model="key-values" name="Product Details" product="Simple Product"></block_2>
+      </section>
+    </root>
+  </jcr:content>
+</jcr:root>

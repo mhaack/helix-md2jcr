@@ -10,52 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
+/* eslint-disable no-param-reassign */
+
 import path from 'path';
 import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
 import xmlFormatter from 'xml-formatter';
 import { splitSection, unwrapImages as unwrapElements, wrapParagraphs } from './utils.js';
 import sanitizeHtml from './mdast-sanitize-html.js';
-import headingPartial from './partials/heading.js';
-import stringPartial from './partials/strong.js';
-import emphasisPartial from './partials/emphasis.js';
-import linkPartial from './partials/link.js';
-import paragraphWrapperPartial from './partials/paragraph.js';
-import nameHelper, { nameReset } from './helpers/name-helper.js';
-import sectionHelper from './helpers/section-helper.js';
-import imagePartial from './partials/image.js';
-import encodeHelper from './helpers/encode-helper.js';
-import whichPartialHelper from './helpers/which-partial-helper.js';
-import gridTablePartial from './partials/grid-table.js';
-import blockQuotePartial from './partials/blockquote.js';
-import tablePartial from './partials/table.js';
+import headingPartial from './hb/partials/heading.js';
+import stringPartial from './hb/partials/strong.js';
+import emphasisPartial from './hb/partials/emphasis.js';
+import linkPartial from './hb/partials/link.js';
+import paragraphWrapperPartial from './hb/partials/paragraph.js';
+import nameHelper, { nameReset } from './hb/helpers/name-helper.js';
+import sectionHelper from './hb/helpers/section-helper.js';
+import imagePartial from './hb/partials/image.js';
+import encodeHelper from './hb/helpers/encode-helper.js';
+import whichPartialHelper from './hb/helpers/which-partial-helper.js';
+import gridTablePartial from './hb/partials/grid-table.js';
+import blockQuotePartial from './hb/partials/blockquote.js';
+import tablePartial from './hb/partials/table.js';
+import pageHelper from './hb/helpers/page-helper.js';
 
-// eslint-disable-next-line no-unused-vars
-export default async function mdast2jcr(mdast, opts = {}) {
-  // const { log = console, resourceLoader, image2png } = opts;
-  // const nameCounter = {};
-
-  // const ctx = {
-  //   style: {},
-  //   paragraphStyle: '',
-  //   images: {},
-  //   listLevel: -1,
-  //   lists: [],
-  //   log,
-  //   image2png,
-  //   resourceLoader,
-  // };
-
-  // eslint-disable-next-line no-param-reassign
+/**
+ * Converts a markdown AST to JCR XML.  This function is the main entry point
+ * for the mdast2jcr module. The function takes a markdown AST and an options
+ * object as input and returns a promise that resolves to a string containing
+ * the JCR XML representation of the markdown AST.
+ * @param mdast The markdown AST to convert to JCR XML.
+ * @param {Mdast2JCROptions} options An options object that can be used to customize the conversion.
+ * @returns {Promise<string>}
+ */
+export default async function mdast2jcr(mdast, options = {}) {
   mdast = sanitizeHtml(mdast);
-  // eslint-disable-next-line no-param-reassign
   mdast = splitSection(mdast);
-  // eslint-disable-next-line no-param-reassign
   mdast = unwrapElements(mdast);
-  // eslint-disable-next-line no-param-reassign
   mdast = wrapParagraphs(mdast);
-
-  // await downloadImages(ctx, mdast);
 
   Handlebars.registerPartial('heading', headingPartial);
   Handlebars.registerPartial('image', imagePartial);
@@ -63,7 +54,7 @@ export default async function mdast2jcr(mdast, opts = {}) {
   Handlebars.registerPartial('strong', stringPartial);
   Handlebars.registerPartial('emphasis', emphasisPartial);
   Handlebars.registerPartial('paragraphWrapper', paragraphWrapperPartial);
-  Handlebars.registerPartial('gridTable', gridTablePartial); // TODO
+  Handlebars.registerPartial('gridTable', gridTablePartial);
   Handlebars.registerPartial('blockquote', blockQuotePartial); // TODO
   Handlebars.registerPartial('table', tablePartial); // TODO
 
@@ -71,6 +62,7 @@ export default async function mdast2jcr(mdast, opts = {}) {
   Handlebars.registerHelper('encode', encodeHelper);
   Handlebars.registerHelper('nameHelper', nameHelper);
   Handlebars.registerHelper('section', sectionHelper);
+  Handlebars.registerHelper('page', pageHelper);
 
   // reset the name helper counter
   nameReset();
@@ -83,7 +75,15 @@ export default async function mdast2jcr(mdast, opts = {}) {
 
   const template = Handlebars.compile(pageTemplateXML);
 
-  let xml = template(mdast);
+  const ctx = {
+    models: options.models,
+    definition: options.definition,
+    filters: options.filters,
+    children: mdast.children,
+  };
+
+  let xml = template(ctx);
+
   xml = xmlFormatter(xml, {
     indentation: '  ', // 2 spaces
     filter: (node) => node.type !== 'Comment', // Remove comments

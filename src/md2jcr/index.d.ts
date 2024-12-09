@@ -12,10 +12,9 @@
 import { Mdast2JCROptions } from '../mdast2jcr'
 
 /**
- * Converts the md to a word document (docx).
- *
- * @param {string} md The markdown document
- * @param {Mdast2JCROptions} [opts] options
+ * Convert a Markdown document to a JCR XML document.
+ * @param {string} md The Markdown document
+ * @param {Mdast2JCROptions} options options
  * @returns {Promise<Buffer>} the docx
  */
-export default function md2jcr(md: string, opts?: Mdast2JCROptions): Promise<Buffer>;
+export default function md2jcr(md:string, options?: Mdast2JCROptions): Promise<Buffer>;

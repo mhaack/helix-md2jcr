@@ -9,8 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-function gridTablePartial() {
-  return '<block></block>\n';
-}
+import { find } from 'unist-util-find';
 
-export default gridTablePartial;
+const image = {
+  supports: (node) => find(node, { type: 'image' }) !== undefined,
+
+  getProperties: (node) => {
+    const imageNode = find(node, { type: 'image' });
+    return {
+      url: imageNode?.url || '',
+      alt: imageNode?.alt || '',
+      label: imageNode?.label || '',
+    };
+  },
+};
+
+export default image;

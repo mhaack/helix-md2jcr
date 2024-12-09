@@ -1,0 +1,32 @@
+[
+  {
+    "id": "teaser",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "image",
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "name": "teaserText_subtitle",
+        "label": "Sub title"
+      },
+      {
+        "component": "text",
+        "name": "teaserText_title",
+        "label": "Title"
+      },
+      {
+        "component": "text",
+        "name": "teaserText_titleType",
+        "label": "Heading Type"
+      },
+      {
+        "component": "text",
+        "name": "teaserText_description",
+        "label": "Description"
+      }
+    ]
+  }
+]

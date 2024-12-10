@@ -245,26 +245,29 @@ function extractProperties(mdast, model, mode, component, fields, properties) {
 
     if (mode === 'keyValue') {
       extractKeyValueProperties(row, model, fieldResolver, fieldGroup, properties);
+    } else if (fieldGroup.isRichText && nodes.length > 1) {
+      // the user has defined a rich text field, and has multiple nodes in the
+      // cell so we group them.
+      const wrapped = {
+        type: 'md2jcr-wrapped',
+        children: nodes,
+      };
+      const field = fieldResolver.resolve(wrapped, fieldGroup);
+      extractPropertiesForNode(field, wrapped, properties);
     } else {
-      if (nodes.length > modelFields.length) {
-        nodes = [{
-          type: 'xxx',
-          children: nodes.flatMap((node) => {
-            const child = {
-              type: 'paragraph',
-              children: node.children,
-            };
-            return child;
-          }),
-        }];
-      }
-
       nodes.forEach((node) => {
         if (mode === 'blockItem') {
           fieldGroup = fieldsCloned.shift();
         }
-        const field = fieldResolver.resolve(node, fieldGroup);
-        extractPropertiesForNode(field, node, properties);
+
+        // If the model is a richtext field we can process the entire paragraph as a single field.
+        // If we have a paragraph node and the model is not a richtext field, then we need to
+        // process each node in the paragraph as a separate field.
+        const nodesToProcess = (node.type === 'paragraph' && !fieldGroup.isRichText) ? node.children : [node];
+        nodesToProcess.forEach((child) => {
+          const field = fieldResolver.resolve(child, fieldGroup);
+          extractPropertiesForNode(field, child, properties);
+        });
       });
     }
   }

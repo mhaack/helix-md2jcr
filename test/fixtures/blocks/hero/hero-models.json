@@ -13,6 +13,11 @@
         "label": "Type"
       },
       {
+        "component": "text",
+        "name": "hero_description",
+        "label": "Description"
+      },
+      {
         "component": "reference",
         "name": "hero_image",
         "label": "Image"

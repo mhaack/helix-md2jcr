@@ -23,7 +23,7 @@
 +=========================================================================+
 | Text with link [CTA 1](https://www.adobe.com) becomes richtext as well  |
 |                                                                         |
-| Text with link [CTA 2](https://www.google.com)  as well                 |
+| Text with link [CTA 2](https://www.google.com) as well                  |
 +-------------------------------------------------------------------------+
 
 +---------------------------------------------------------------------------+

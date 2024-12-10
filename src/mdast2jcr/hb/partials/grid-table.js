@@ -128,7 +128,7 @@ function extractPropertiesForNode(field, currentNode, properties) {
     let value;
     const hasParagraphChildren = currentNode.children && find(currentNode, { type: 'paragraph' });
 
-    // if we're not a paragraph and we have paragraph children then we need to wrap the children
+    // if we're not a paragraph, and we have paragraph children then we need to wrap the children
     // in a paragraph
     if (currentNode.type !== 'paragraph' && hasParagraphChildren) {
       // combine all the children into a single string, but wrap them in a paragraph
@@ -320,7 +320,7 @@ function getBlockItems(mdast, modelHelper, definitions, allowedComponents) {
 
     // check to see if we can use this component
     if (allowedComponents.includes(componentId)) {
-      const fieldGroup = modelHelper.getFieldGroup(componentId);
+      const fieldGroup = modelHelper.getModelFieldGroup(componentId);
       if (fieldGroup) {
         const component = getComponentById(definitions, componentId);
         const properties = { ...component.defaultFields };

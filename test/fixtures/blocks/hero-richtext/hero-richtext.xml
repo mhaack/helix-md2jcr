@@ -3,8 +3,7 @@
   <jcr:content cq:template="/libs/core/franklin/templates/page">
     <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
       <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
-        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" hero_description="Subtitle" hero_image="http://localhost/hero.png" hero_imageAlt="Hero image" hero_title="Stini Gear" hero_titleType="h1" model="hero" name="Hero"></block>
-        <block_1 sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" hero_description="Subtitle" hero_image="http://localhost/hero.png" hero_imageAlt="Hero image" hero_title="Stini Gear" hero_titleType="h1" model="hero" name="Hero"></block_1>
+        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" imageLargeScreen="http://localhost/image.jpg" imageLargeScreenAlt="large pic" imageSmallScreen="http://localhost/image2.jpg" imageSmallScreenAlt="small pic" model="hero" name="Hero" text="&lt;p&gt;&lt;h1&gt;The Pure Difference&lt;/h1&gt;&lt;/p&gt;&lt;p&gt;High-quality supplements&lt;/p&gt;&lt;p&gt;&lt;a href&#x3D;&quot;/our-products/all-products.html&quot; title&#x3D;&quot;Shop Now&quot;&gt;Shop Now&lt;/a&gt;&lt;/p&gt;"></block>
       </section>
     </root>
   </jcr:content>

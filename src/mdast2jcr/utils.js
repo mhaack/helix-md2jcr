@@ -205,9 +205,9 @@ export function stripNewlines(value) {
   }
 
   if (typeof value === 'string') {
-    return value.replace(/\n/g, ' ');
+    return value.replace(/\n/g, ' ').trim();
   }
-  return toString(value).replace(/\n/g, ' ');
+  return toString(value).replace(/\n/g, ' ').trim();
 }
 
 /**

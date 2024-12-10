@@ -1,0 +1,36 @@
+[
+  {
+    "id": "hero",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "text",
+        "label": "Text"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "imageLargeScreen",
+        "label": "Image - large screen"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageLargeScreenAlt",
+        "label": "Large screen image alt"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "imageSmallScreen",
+        "label": "Image - small screen"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageSmallScreenAlt",
+        "label": "Small screen image alt"
+      }
+    ]
+  }
+]

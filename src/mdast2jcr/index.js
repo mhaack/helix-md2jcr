@@ -32,6 +32,7 @@ import gridTablePartial from './hb/partials/grid-table.js';
 import blockQuotePartial from './hb/partials/blockquote.js';
 import tablePartial from './hb/partials/table.js';
 import pageHelper from './hb/helpers/page-helper.js';
+import pageTemplate from './templates/page-template.js';
 
 /**
  * Converts a markdown AST to JCR XML.  This function is the main entry point
@@ -68,10 +69,7 @@ export default async function mdast2jcr(mdast, options = {}) {
   nameReset();
 
   // register page template
-  const pageTemplateXML = await readFile(
-    path.resolve('./src/mdast2jcr', 'templates', 'page.xml'),
-    'utf-8',
-  );
+  const pageTemplateXML = pageTemplate();
 
   const template = Handlebars.compile(pageTemplateXML);
 
@@ -91,9 +89,7 @@ export default async function mdast2jcr(mdast, options = {}) {
     lineSeparator: '\n',
   });
 
-  process.stdout.write(xml);
+  console.log(xml);
 
-  process.stdout.write('\n');
-  process.stdout.write('==================================================\n');
   return xml;
 }

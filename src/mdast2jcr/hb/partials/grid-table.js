@@ -331,8 +331,11 @@ function getBlockItems(mdast, modelHelper, definitions, allowedComponents) {
         items.push(`<item_${items.length} sling:resourceType="core/franklin/components/block/v1/block/item" name="${fieldGroup.model.id}" ${Object.entries(properties).map(([k, v]) => `${k}="${v}"`).join(' ')}></item_${items.length}>`);
       }
     } else {
-      const msg = `The component '${componentId}' is not allowed in the block '${modelHelper.blockName}'. Modify the ${modelHelper.blockName} filters file to include the '${componentId}' component in the list of components.`;
-      console.error(msg);
+      // const msg = `The component '${componentId}' is not allowed in the block
+      // '${modelHelper.blockName}'. Modify the ${modelHelper.blockName} filters
+      // file to include the '${componentId}' component in the list of
+      // components.`;
+      // console.error(msg);
     }
   });
 

@@ -12,9 +12,7 @@
 
 /* eslint-disable no-param-reassign */
 
-import path from 'path';
 import Handlebars from 'handlebars';
-import { readFile } from 'fs/promises';
 import xmlFormatter from 'xml-formatter';
 import { splitSection, unwrapImages as unwrapElements, wrapParagraphs } from './utils.js';
 import sanitizeHtml from './mdast-sanitize-html.js';
@@ -89,7 +87,7 @@ export default async function mdast2jcr(mdast, options = {}) {
     lineSeparator: '\n',
   });
 
-  console.log(xml);
+  // console.log(xml);
 
   return xml;
 }

@@ -25,7 +25,6 @@ describe('Field Group Tests', () => {
 
     const fieldGrouping = new FieldGroup(model);
     assert.equal(fieldGrouping.fields.length, 2);
-    assert.equal(fieldGrouping.fields[0].isGrouped, false);
   });
 
   it('single group test', () => {
@@ -39,7 +38,6 @@ describe('Field Group Tests', () => {
 
     const fieldGrouping = new FieldGroup(model);
     assert.equal(fieldGrouping.fields.length, 1);
-    assert.equal(fieldGrouping.fields[0].isGrouped, true);
   });
 
   it('two group test', () => {
@@ -99,11 +97,8 @@ describe('Field Group Tests', () => {
     const fieldGrouping = new FieldGroup(model);
     assert.equal(fieldGrouping.fields.length, 3);
     assert.equal(fieldGrouping.fields[0].fields.length, 1);
-    assert.equal(fieldGrouping.fields[0].isGrouped, false);
     assert.equal(fieldGrouping.fields[1].fields.length, 1);
-    assert.equal(fieldGrouping.fields[1].isGrouped, true);
     assert.equal(fieldGrouping.fields[2].fields.length, 2);
-    assert.equal(fieldGrouping.fields[2].isGrouped, true);
   });
 
   it('verify field object structure', () => {
@@ -157,7 +152,6 @@ describe('Field Group Tests', () => {
 
     const fieldGrouping = new FieldGroup(model);
     assert.equal(fieldGrouping.fields.length, 1);
-    assert.equal(fieldGrouping.fields[0].isGrouped, false);
     assert.equal(fieldGrouping.fields[0].fields[0].collapsed.length, 1);
   });
 

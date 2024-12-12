@@ -77,6 +77,8 @@ function pageHelper(options) {
 
   const attributes = {
     'cq:template': '/libs/core/franklin/templates/page',
+    'sling:resourceType': 'core/franklin/components/page/v1/page',
+    'jcr:primaryType': 'cq:PageContent',
   };
 
   const tables = findAll(mdast, (node) => node.type === 'gridTable', false);

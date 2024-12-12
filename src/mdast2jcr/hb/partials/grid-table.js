@@ -382,7 +382,7 @@ function gridTablePartial(context) {
 
   // Assign the template properties to the block properties
   const properties = {
-    'sling:resourceType': 'core/franklin/components/link/v1/block',
+    'sling:resourceType': 'core/franklin/components/block/v1/block',
     'jcr:primaryType': 'nt:unstructured',
     ...component.defaultFields,
     ...blockHeaderProperties,

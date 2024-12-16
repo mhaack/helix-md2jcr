@@ -259,15 +259,8 @@ function extractProperties(mdast, model, mode, component, fields, properties) {
         if (mode === 'blockItem') {
           fieldGroup = fieldsCloned.shift();
         }
-
-        // If the model is a richtext field we can process the entire paragraph as a single field.
-        // If we have a paragraph node and the model is not a richtext field, then we need to
-        // process each node in the paragraph as a separate field.
-        const nodesToProcess = (node.type === 'paragraph' && !fieldGroup.isRichText) ? node.children : [node];
-        nodesToProcess.forEach((child) => {
-          const field = fieldResolver.resolve(child, fieldGroup);
-          extractPropertiesForNode(field, child, properties);
-        });
+        const field = fieldResolver.resolve(node, fieldGroup);
+        extractPropertiesForNode(field, node, properties);
       });
     }
   }

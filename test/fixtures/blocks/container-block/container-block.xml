@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" jcr:primaryType="cq:Page">
-  <jcr:content cq:template="/libs/core/franklin/templates/page">
+  <jcr:content cq:template="/libs/core/franklin/templates/page" sling:resourceType="core/franklin/components/page/v1/page" jcr:primaryType="cq:PageContent">
     <root jcr:primaryType="nt:unstructured" sling:resourceType="core/franklin/components/root/v1/root">
       <section sling:resourceType="core/franklin/components/section/v1/section" jcr:primaryType="nt:unstructured">
-        <block sling:resourceType="core/franklin/components/link/v1/block" jcr:primaryType="nt:unstructured" classes="types" filter="vehicles" model="vehicles" name="Vehicles" title="Planes, Trains, and Automobiles">
+        <block sling:resourceType="core/franklin/components/block/v1/block" jcr:primaryType="nt:unstructured" classes="types" filter="vehicles" model="vehicles" name="Vehicles" title="Planes, Trains, and Automobiles">
           <item_0 sling:resourceType="core/franklin/components/block/v1/block/item" name="Plane" model="plane" classes="[small, private]" field1="Field 1" field2="&lt;p&gt;Field &lt;em&gt;2&lt;/em&gt;&lt;/p&gt;"></item_0>
           <item_1 sling:resourceType="core/franklin/components/block/v1/block/item" name="Train" model="train" field1="Field 1" field2="Field 2" field3="Field 3"></item_1>
           <item_2 sling:resourceType="core/franklin/components/block/v1/block/item" name="Car" model="car" field1="Field 1" field2="Field 2" field3="Field 3" field4="Field 4"></item_2>

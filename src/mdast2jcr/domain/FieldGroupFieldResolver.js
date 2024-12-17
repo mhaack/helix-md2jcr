@@ -64,14 +64,14 @@ class FieldGroupFieldResolver {
         return true;
       } else if (node.type === 'paragraph') {
         // is the first child an image?
-        if (node.children[0]?.type === 'image' && field.component === 'reference') {
+        if (node.children[0]?.type === 'image') {
           // remove the field from fields
           fields.splice(fields.indexOf(field), 1);
           return true;
         }
 
         // do we have a link
-        if (node.children[0]?.type === 'link' && field.component === 'text') {
+        if (node.children[0]?.type === 'link') {
           fields.splice(fields.indexOf(field), 1);
           return true;
         }
